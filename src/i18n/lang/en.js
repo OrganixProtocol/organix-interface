@@ -137,7 +137,7 @@ const en = {
     claimRules: 'After the claim, OGX rewards will be stored in the escrow and can be vest after a locking time. The trading fee reward will be directly transferred to your account',
     tradingGap: 'It takes about 1-2 minute for the system to settle the trading between buying and selling the same currency.The settlement price will select the corresponding Oracle price according to the transaction time for settlement, and the settlement trigger time is the next sale of the currency.',
     aboutNoSlip: 'About no slippage',
-    noSlip: 'The deal price of all tokens depends on the price provided by the oracle, and the specific transaction price will be based on the oracle price with the smallest interval',
+    noSlip: 'The deal price of all tokens depends on the price provided by the oracle',
     maxQueueReached: 'The unsettled orders of output currency are full. Please try to reverse sell or buy a small amount of tokens to finish the settlement of historical orders before conducting this transaction',
     settleNeeds: '{symbol} needs {time}s to settle',
     whatisprofit: 'This value only represents the difference between your debt and synthetic assets',
