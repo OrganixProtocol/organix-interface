@@ -1010,17 +1010,18 @@ var myMixin = {
 
                 this.claimEndTime = dayjs((feePeriodList[currentFeePeriod].start_time + feePeriodDuration) * 1000).format('YYYY-MM-DD HH:mm:ss');
 
-                // 本轮可以领取的
-                // 已经领取过 
+                // current round
+                // claimed 
                 if (claimedPeriod >= currentFeePeriodId && claimedPeriod !== 0) {
                     this.claimableFee = 0;
                     this.isClaimedCurrentRound = true;
                     this.claimableReward = 0;
                 }
+                // check claimable
                 else {
                     var hasFinded = false;
                     feeIssueData.forEach(item => {
-                        if (item.debt_entry_index !== 0 && item.debt_entry_index < closeIndex && !hasFinded) {
+                        if (item.debt_entry_index !== 0 && item.debt_entry_index <= closeIndex && !hasFinded) {
                             hasFinded = true
                             this.getMyFess(item.debt_entry_index, closeIndex, item.debt_percentage, feeList[0].fees_to_distribute, feeList[0].rewards_to_distribute)
                         }
