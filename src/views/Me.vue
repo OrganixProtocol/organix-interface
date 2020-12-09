@@ -24,10 +24,10 @@
       <h3 class="total-bal">
         <p>
           <span class="label"> {{ $t("i18n.total") }}: </span
-          >{{ ogxTotalBalance | fixedDeciaml }} OGX
+          >{{ ogxTotalBalance | fixedDeciaml2Str }} OGX
           <br />
           <span class="label"> {{ $t("i18n.valued") }}: </span>${{
-            parseFloat(ogxTotalBalance * price["OGX"]).toFixed(2)
+            parseFloat(ogxTotalBalance * price["OGX"]).toFixed(2) | fixedDeciaml2Str
           }}
         </p>
       </h3>
@@ -52,11 +52,11 @@
             <div class="bal-title">
               <span
                 >{{ $t("i18n.locked") }}
-                {{ (ogxTotalBalance - myTransferAble) | fixedDeciaml2 }}
+                {{ (ogxTotalBalance - myTransferAble) | fixedDeciaml2Str }}
               </span>
               <span class="float-right"
                 >{{ $t("i18n.transferable") }}
-                {{ myTransferAble | fixedDeciaml2 }}</span
+                {{ myTransferAble | fixedDeciaml2Str }}</span
               >
             </div>
             <div class="bar-wrap">
@@ -77,14 +77,14 @@
           <div class="status-bar">
             <div class="bal-title">
               <span
-                >{{ $t("i18n.staked") }} {{ myStakedOGX | fixedDeciaml2 }}</span
+                >{{ $t("i18n.staked") }} {{ myStakedOGX | fixedDeciaml2Str }}</span
               >
               <span class="float-right">
                 {{ $t("i18n.unstaked") }}
                 {{
                   ogxTotalBalance - myStakedOGX > 0
                     ? ogxTotalBalance - myStakedOGX
-                    : 0 | fixedDeciaml2
+                    : 0 | fixedDeciaml2Str
                 }}</span
               >
             </div>
@@ -105,11 +105,11 @@
             <div class="bal-title">
               <span
                 >{{ $t("i18n.walletBal") }}:
-                {{ parseFloat(ogxWalletBalance) | fixedDeciaml2 }}</span
+                {{ parseFloat(ogxWalletBalance) | fixedDeciaml2Str }}</span
               >
               <span class="float-right"
                 >{{ $t("i18n.stored") }}:
-                {{ ogxStoreBalance | fixedDeciaml2 }}</span
+                {{ ogxStoreBalance | fixedDeciaml2Str }}</span
               >
             </div>
             <div class="bar-wrap">
@@ -140,12 +140,12 @@
       <h3>
         <p>
           <span class=""> {{ $t("i18n.myAssets") }}: </span>
-          <span class="float-right">${{ mySynthValue | fixedDeciaml2 }}</span>
+          <span class="float-right">${{ mySynthValue | fixedDeciaml2Str }}</span>
           <br />
           <span @click="showMsg($t('i18n.whatisdebt'))" class=""
             >{{ $t("i18n.myDebt") }} <i class="iconfont iconinfo"></i> :
           </span>
-          <span class="float-right"> ${{ myDebt | fixedDeciaml2 }}</span>
+          <span class="float-right"> ${{ myDebt | fixedDeciaml2Str }}</span>
 
           <br />
           <span v-if="mySynthValue && myDebt">
@@ -161,7 +161,7 @@
                   : 'danger-color') + ' float-right'
               "
               >{{ mySynthValue > myDebt ? "+" : "" }}
-              {{ (mySynthValue - myDebt) | fixedDeciaml2 }}</span
+              {{ (mySynthValue - myDebt) | fixedDeciaml2Str }}</span
             >
           </span>
         </p>
@@ -193,20 +193,20 @@
             </td>
             <!-- <td></td> -->
             <td>
-              <span class="bal"> {{ synth.amount | fixedDeciaml }} </span><br />
+              <span class="bal"> {{ synth.amount | fixedDeciaml2Str }} </span><br />
               <span class="label valued"
                 >$
                 {{
                   synth.total
                     ? synth.total
-                    : parseFloat(synth.amount * synth.price) | fixedDeciaml2
+                    : parseFloat(synth.amount * synth.price) | fixedDeciaml2Str
                 }}</span
               >
             </td>
           </tr>
           <!-- <tr>
             <td>{{ $t("i18n.debt") }}</td>
-            <td>{{ myDebt | fixedDeciaml }}</td>
+            <td>{{ myDebt | fixedDeciaml2Str }}</td>
           </tr> -->
         </table>
       </div>

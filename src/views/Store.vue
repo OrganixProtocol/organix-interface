@@ -26,7 +26,7 @@
               {{ vest.timestamp | formatTime }}
             </td>
             <td style="text-align: right">
-              {{ vest.quantity | fixedDeciaml }}
+              {{ vest.quantity | fixedDeciaml2Str }}
             </td>
           </tr>
         </table>
@@ -80,7 +80,7 @@
               {{ vest.timestamp | formatTime }}
             </td>
             <td style="text-align: right">
-              {{ vest.quantity | fixedDeciaml }}
+              {{ vest.quantity | fixedDeciaml2Str }}
             </td>
           </tr>
         </table>

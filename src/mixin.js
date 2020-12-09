@@ -320,6 +320,10 @@ var myMixin = {
         fixedDeciaml2(val) {
             return val !== '' ? FIXED(parseFloat(val), 2) : '';
         },
+        fixedDeciaml2Str(val) {
+            return val !== '' ? FIXED(parseFloat(val), 2) : '';
+            // return val !== '' ? parseFloat(parseFloat(val).toFixed(2)).toLocaleString('en-US') : ''
+        },
         fixedPrecision(val) {
             return val.toPrecision(6);
         },
@@ -837,9 +841,7 @@ var myMixin = {
                     var symbol = item.sym.split(',')[1];
 
                     allSynthsList.push({ symbol: symbol, price: price, supply: '', timestamp: item.timestamp });
-                    if (symbol === 'OGX') {
-                        console.log(price);
-                    }
+
                     tempPriceObj[symbol] = price;
 
                     // get supply
@@ -1026,12 +1028,18 @@ var myMixin = {
                 // check claimable
                 else {
                     var hasFinded = false;
+                    var tempItem = '';
                     feeIssueData.forEach(item => {
-                        if (item.debt_entry_index !== 0 && item.debt_entry_index <= closeIndex && !hasFinded) {
-                            hasFinded = true
-                            this.getMyFess(item.debt_entry_index, closeIndex, item.debt_percentage, feeList[0].fees_to_distribute, feeList[0].rewards_to_distribute)
+                        if (item.debt_entry_index !== 0 && item.debt_entry_index <= closeIndex) {
+                            hasFinded = true;
+                            tempItem = item;
                         }
                     })
+
+                    if (hasFinded) {
+                        this.getMyFess(tempItem.debt_entry_index, closeIndex, tempItem.debt_percentage, feeList[0].fees_to_distribute, feeList[0].rewards_to_distribute)
+                    }
+
                 }
 
                 // next round

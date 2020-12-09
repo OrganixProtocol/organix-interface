@@ -86,7 +86,7 @@ const zh = {
     liquidationRatio: '清算抵押率',
     liquidationDelay: '清算延迟',
     updateTime: '价格更新时间',
-    cantSettleDuringWaiting: '无法结算最近的交易，请稍后再试',
+    cantSettleDuringWaiting: '无法结算最近的交易，请稍等1-2分钟后再试',
     insufficientBalance: '结算后余额不足，请减少交易量',
     liquidation: '清算',
     liquidationDesc: '当抵押率低于{liqRatio}时账号会被标记为待清算，同时会有一段时间的缓冲期，超过缓冲期如果抵押率仍未恢复，则可被其他人进行清算，清算者可通过OUSD清算获得更多价值的OGX',

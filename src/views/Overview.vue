@@ -16,18 +16,18 @@
       <table class="sys-info-table">
         <tr>
           <td>OGX {{ $t("i18n.totalSupply") }}</td>
-          <td class="align-right">{{ ogxTotalSupply | fixedDeciaml2 }}</td>
+          <td class="align-right">{{ ogxTotalSupply | fixedDeciaml2Str }}</td>
         </tr>
         <tr>
           <td>OGX {{ $t("i18n.totalValue") }}</td>
           <td class="align-right">
-            ${{ (parseFloat(ogxTotalSupply) * price["OGX"]) | fixedDeciaml2 }}
+            ${{ (parseFloat(ogxTotalSupply) * price["OGX"]) | fixedDeciaml2Str }}
           </td>
         </tr>
         <tr>
           <td>{{ $t("i18n.totalSynthAssetsValue") }}</td>
           <td class="align-right">
-            ${{ totalSynthAssetsValue | fixedDeciaml2 }}
+            ${{ totalSynthAssetsValue | fixedDeciaml2Str }}
           </td>
         </tr>
 
@@ -40,14 +40,14 @@
 
         <tr>
           <td>{{ $t("i18n.currentRoundFee") }}</td>
-          <td class="align-right">${{ nextFees | fixedDeciaml2 }}</td>
+          <td class="align-right">${{ nextFees | fixedDeciaml2Str }}</td>
         </tr>
 
         <tr>
           <td>{{ $t("i18n.currentRoundVol") }}</td>
           <td class="align-right">
             ${{
-              parseFloat((parseFloat(nextFees) / 1.8) * 1000) | fixedDeciaml2
+              parseFloat((parseFloat(nextFees) / parseFloat($store.state.feeRate / 100000) * 0.9) * 1000) | fixedDeciaml2Str
             }}
           </td>
         </tr>
@@ -124,7 +124,7 @@
             <td>
               <span class="bal">
                 {{
-                  synth.supply && synth.supply.split(" ")[0] | fixedDeciaml2
+                  synth.supply && synth.supply.split(" ")[0] | fixedDeciaml2Str
                 }}</span
               >
               <br />
@@ -135,8 +135,8 @@
                     ? parseFloat(
                         parseFloat(synth.price) * parseFloat(synth.supply)
                       ).toFixed(2)
-                    : "-"
-                }}
+                    : "" | fixedDeciaml2Str
+                  }}
                 ({{
                   synth.price && synth.supply
                     ? parseFloat(

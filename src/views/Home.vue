@@ -37,7 +37,7 @@
               ? (this.ogxTotalBalance * this.price["OGX"]) /
                   this.$store.state.targetRatio -
                 this.myDebt
-              : 0 | fixedDeciaml
+              : 0 | fixedDeciaml2Str
           }}</span>
           OUSD
           <div style="position: relative">
@@ -143,10 +143,10 @@
         </div>
         <div class="divider"></div>
         <div class="modal-input">
-          <span>{{ $t("i18n.debt") }}: {{ myDebt | fixedDeciaml }}</span>
+          <span>{{ $t("i18n.debt") }}: {{ myDebt | fixedDeciaml2Str }}</span>
           <span class="float-right">
             {{ $t("i18n.ousdBal") }}:
-            <span> {{ balanceObj["OUSD"] || 0 | fixedDeciaml }} </span>
+            <span> {{ balanceObj["OUSD"] || 0 | fixedDeciaml2Str }} </span>
           </span>
           <div style="position: relative">
             <input
@@ -498,14 +498,14 @@
             <div class="col-2 box next">
               <h5>{{ $t("i18n.ogxReward") }}</h5>
               <p class="claim-amount">
-                {{ estClaimableReward | fixedDeciaml }}
+                {{ estClaimableReward | fixedDeciaml2Str }}
                 <br />OGX
               </p>
             </div>
             <div class="col-2 box next">
               <h5>{{ $t("i18n.feeReward") }}</h5>
               <p class="claim-amount">
-                {{ estClaimableFee | fixedDeciaml }}
+                {{ estClaimableFee | fixedDeciaml2Str }}
                 <br />OUSD
               </p>
             </div>
@@ -525,14 +525,14 @@
             <div class="col-2 box">
               <h5>{{ $t("i18n.ogxReward") }}</h5>
               <p class="claim-amount">
-                {{ claimableReward | fixedDeciaml }}
+                {{ claimableReward | fixedDeciaml2Str }}
                 <br />OGX
               </p>
             </div>
             <div class="col-2 box">
               <h5>{{ $t("i18n.feeReward") }}</h5>
               <p class="claim-amount">
-                {{ claimableFee | fixedDeciaml }}
+                {{ claimableFee | fixedDeciaml2Str }}
                 <br />OUSD
               </p>
             </div>
@@ -626,7 +626,7 @@
               class="vertical-middle"
               style="width: 50%; float: left"
               >{{ $t("i18n.bal") }}:
-              {{ balanceObj[synth.symbol] | fixedDeciaml }}
+              {{ balanceObj[synth.symbol] | fixedDeciaml2Str }}
             </span>
           </div>
         </div>
