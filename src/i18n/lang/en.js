@@ -5,7 +5,7 @@ const en = {
     mint: 'Mint',
     mintPlaceholder: 'OUSD Amount to mint',
     mintDesc: 'Mint OUSD by staking OGX. This gives you a Collateralization Ratio and a debt, allowing you to earn staking rewards.',
-    mintDesc1: 'After Staking you need to wait {minStakeTime} before you can destroy it',
+    mintDesc1: 'After Staking you need to wait {minStakeTime} days before you can destroy it',
     max: 'MAX',
     currRatio: 'C-Ratio',
     minRatio: 'Min C-Ratio',

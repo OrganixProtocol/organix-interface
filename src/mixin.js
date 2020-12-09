@@ -730,7 +730,7 @@ var myMixin = {
                 rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'issuerconfig' }).then(res => {
                     this.$store.commit('setMinStakingTime', {
                         minStakingTime: res.rows[0].minimum_stake_time,
-                        minStakingTimeStr: res.rows[0].minimum_stake_time >= 86400 ? ((res.rows[0].minimum_stake_time / 86400) + ' ' + this.$t('i18n.day')) : res.rows[0].minimum_stake_time >= 60 ? ((res.rows[0].minimum_stake_time / 60) + ' ' + this.$t('i18n.minute')) : ''
+                        minStakingTimeStr: res.rows[0].minimum_stake_time / 86400
                     });
                 })
             }
@@ -757,7 +757,7 @@ var myMixin = {
                 }).then(res => {
                     this.$store.commit('setLiquidition', {
                         liquidationRatio: parseFloat(FLOAT_UNIT / res.rows[0].liquidation_ratio),
-                        liquidationDelay: res.rows[0].liquidation_delay / 60 / 60 + ' ' + this.$t('i18n.hour')
+                        liquidationDelay: res.rows[0].liquidation_delay / 60 / 60
                     });
                 })
             }

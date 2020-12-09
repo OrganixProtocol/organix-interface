@@ -82,11 +82,11 @@
         </tr>
         <tr>
           <td>{{ $t("i18n.liquidationDelay") }}</td>
-          <td class="align-right">{{ $store.state.liquidationDelay }}</td>
+          <td class="align-right">{{ $store.state.liquidationDelay }} {{$t('i18n.hour')}}</td>
         </tr>
         <tr>
           <td>{{ $t("i18n.minStakingTime") }}</td>
-          <td class="align-right">{{ $store.state.minStakingTimeStr }}</td>
+          <td class="align-right">{{ $store.state.minStakingTimeStr }} {{$t('i18n.day')}}</td>
         </tr>
       </table>
     </div>

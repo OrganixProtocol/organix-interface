@@ -21,7 +21,7 @@
           <p>
             {{
               $t("i18n.mintDesc1", {
-                minStakeTime: $store.state.minStakingTimeStr
+                minStakeTime: $store.state.minStakingTimeStr 
               })
             }}
           </p>
@@ -669,7 +669,7 @@
           }}</span>
           <span class="float-right"
             >清算延迟:
-            <span class="tips em">{{ $store.state.liquidationDelay }} </span>
+            <span class="tips em">{{ $store.state.liquidationDelay }} {{$t('i18n.hour')}} </span>
           </span>
         </div>
 

@@ -5,7 +5,7 @@ const zh = {
     mint: '铸造',
     mintPlaceholder: '铸造的OUSD数量',
     mintDesc: '抵押OGX铸造OUSD，同时产生的债务，债务量影响你可领取奖励。铸造OUSD会减少抵押率',
-    mintDesc1: '抵押铸造后需要等待 {minStakeTime} 后才可以进行销毁',
+    mintDesc1: '抵押铸造后需要等待 {minStakeTime}天 后才可以进行销毁',
     max: '最大',
     currRatio: '抵押率',
     minRatio: '最低抵押率',
