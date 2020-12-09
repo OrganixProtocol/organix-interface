@@ -831,12 +831,16 @@ var myMixin = {
         getAllSynths() {
             var allSynthsList = [];
             return rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'currrundrate', limit: 100 }).then(res => {
+                let tempPriceObj = {};
                 res.rows.forEach(item => {
                     var price = parseFloat(item.rate / FLOAT_UNIT);
                     var symbol = item.sym.split(',')[1];
 
                     allSynthsList.push({ symbol: symbol, price: price, supply: '', timestamp: item.timestamp });
-                    this.price[symbol] = price;
+                    if (symbol === 'OGX') {
+                        console.log(price);
+                    }
+                    tempPriceObj[symbol] = price;
 
                     // get supply
                     rpc.get_currency_stats(MAIN_CONTRACT, symbol).then(subRes => {
@@ -848,6 +852,8 @@ var myMixin = {
 
                     }).then(aa => this.mergePrice());
                 })
+
+                this.price = tempPriceObj;
                 this.$store.commit('setAllSynthsList', {
                     allSynthsList: allSynthsList
                 })
