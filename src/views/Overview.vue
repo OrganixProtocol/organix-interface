@@ -21,7 +21,9 @@
         <tr>
           <td>OGX {{ $t("i18n.totalValue") }}</td>
           <td class="align-right">
-            ${{ (parseFloat(ogxTotalSupply) * price["OGX"]) | fixedDeciaml2Str }}
+            ${{
+              (parseFloat(ogxTotalSupply) * price["OGX"]) | fixedDeciaml2Str
+            }}
           </td>
         </tr>
         <tr>
@@ -47,7 +49,12 @@
           <td>{{ $t("i18n.currentRoundVol") }}</td>
           <td class="align-right">
             ${{
-              parseFloat((parseFloat(nextFees) / parseFloat($store.state.feeRate / 100000) * 0.9) * 1000) | fixedDeciaml2Str
+              parseFloat(
+                (parseFloat(nextFees) /
+                  parseFloat($store.state.feeRate / 100000)) *
+                  0.9 *
+                  1000
+              ) | fixedDeciaml2Str
             }}
           </td>
         </tr>
@@ -82,11 +89,15 @@
         </tr>
         <tr>
           <td>{{ $t("i18n.liquidationDelay") }}</td>
-          <td class="align-right">{{ $store.state.liquidationDelay }} {{$t('i18n.hour')}}</td>
+          <td class="align-right">
+            {{ $store.state.liquidationDelay }} {{ $t("i18n.hour") }}
+          </td>
         </tr>
         <tr>
           <td>{{ $t("i18n.minStakingTime") }}</td>
-          <td class="align-right">{{ $store.state.minStakingTimeStr }} {{$t('i18n.day')}}</td>
+          <td class="align-right">
+            {{ $store.state.minStakingTimeStr }} {{ $t("i18n.day") }}
+          </td>
         </tr>
       </table>
     </div>
@@ -136,7 +147,7 @@
                         parseFloat(synth.price) * parseFloat(synth.supply)
                       ).toFixed(2)
                     : "" | fixedDeciaml2Str
-                  }}
+                }}
                 ({{
                   synth.price && synth.supply
                     ? parseFloat(
@@ -151,24 +162,7 @@
       </div>
     </div>
 
-    <mt-tabbar v-model="selected" :fixed="true">
-      <mt-tab-item @click.native="go('home')" id="home">
-        <i slot="icon" class="iconfont iconhome"></i>
-        {{ $t("i18n.home") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('overview')" id="overview">
-        <i slot="icon" class="iconfont iconpie-chart"></i>
-        {{ $t("i18n.dashboard") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('store')" id="store">
-        <i slot="icon" class="iconfont iconstore"></i>
-        {{ $t("i18n.store") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('me')" id="me">
-        <i slot="icon" class="iconfont iconme"></i>
-        {{ $t("i18n.me") }}
-      </mt-tab-item>
-    </mt-tabbar>
+    <Tab></Tab>
   </div>
 </template>
 
@@ -176,10 +170,7 @@
 import mixins from "../mixin";
 
 export default {
-  mixins: [mixins],
-  created() {
-    this.selected = "overview";
-  }
+  mixins: [mixins]
 };
 </script>
 

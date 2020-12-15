@@ -1,6 +1,6 @@
 <template>
-  <div :class="'rank ' + this.$i18n.locale">
-    <mt-tabbar v-model="selected" :fixed="true">
+  <div>
+    <mt-tabbar v-model="$store.state.selected" :fixed="true">
       <mt-tab-item @click.native="go('home')" id="home">
         <i slot="icon" class="iconfont iconhome"></i>
         {{ $t("i18n.home") }}
@@ -8,6 +8,10 @@
       <mt-tab-item @click.native="go('overview')" id="overview">
         <i slot="icon" class="iconfont iconpie-chart"></i>
         {{ $t("i18n.dashboard") }}
+      </mt-tab-item>
+      <mt-tab-item @click.native="go('exchange')" id="exchange">
+        <i slot="icon" class="iconfont iconexchange"></i>
+        {{ $t("i18n.exchange") }}
       </mt-tab-item>
       <mt-tab-item @click.native="go('store')" id="store">
         <i slot="icon" class="iconfont iconstore"></i>
@@ -20,20 +24,19 @@
     </mt-tabbar>
   </div>
 </template>
-
 <script>
-import mixins from "../mixin";
-
 export default {
-  mixins: [mixins],
-  data() {
-    return {};
-  },
-  created() {
-    this.selected = "rank";
+  name: "tab",
+  methods: {
+    go(tab) {
+      this.$store.commit("setSelectedTab", { selected: tab });
+      this.$router.push(tab);
+    }
   }
 };
 </script>
-
 <style scoped lang="less">
+.iconfont {
+  font-size: 18px;
+}
 </style>

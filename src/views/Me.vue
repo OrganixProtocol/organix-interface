@@ -27,7 +27,8 @@
           >{{ ogxTotalBalance | fixedDeciaml2Str }} OGX
           <br />
           <span class="label"> {{ $t("i18n.valued") }}: </span>${{
-            parseFloat(ogxTotalBalance * price["OGX"]).toFixed(2) | fixedDeciaml2Str
+            parseFloat(ogxTotalBalance * price["OGX"]).toFixed(2)
+              | fixedDeciaml2Str
           }}
         </p>
       </h3>
@@ -77,7 +78,8 @@
           <div class="status-bar">
             <div class="bal-title">
               <span
-                >{{ $t("i18n.staked") }} {{ myStakedOGX | fixedDeciaml2Str }}</span
+                >{{ $t("i18n.staked") }}
+                {{ myStakedOGX | fixedDeciaml2Str }}</span
               >
               <span class="float-right">
                 {{ $t("i18n.unstaked") }}
@@ -140,7 +142,9 @@
       <h3>
         <p>
           <span class=""> {{ $t("i18n.myAssets") }}: </span>
-          <span class="float-right">${{ mySynthValue | fixedDeciaml2Str }}</span>
+          <span class="float-right"
+            >${{ mySynthValue | fixedDeciaml2Str }}</span
+          >
           <br />
           <span @click="showMsg($t('i18n.whatisdebt'))" class=""
             >{{ $t("i18n.myDebt") }} <i class="iconfont iconinfo"></i> :
@@ -193,7 +197,7 @@
             </td>
             <!-- <td></td> -->
             <td>
-              <span class="bal"> {{ synth.amount | fixedDeciaml2Str }} </span><br />
+              <span class="bal"> {{ synth.amount | fixedDeciaml }} </span><br />
               <span class="label valued"
                 >$
                 {{
@@ -290,24 +294,7 @@
       </div>
     </div>
 
-    <mt-tabbar v-model="selected" :fixed="true">
-      <mt-tab-item @click.native="go('home')" id="home">
-        <i slot="icon" class="iconfont iconhome"></i>
-        {{ $t("i18n.home") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('overview')" id="overview">
-        <i slot="icon" class="iconfont iconpie-chart"></i>
-        {{ $t("i18n.dashboard") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('store')" id="store">
-        <i slot="icon" class="iconfont iconstore"></i>
-        {{ $t("i18n.store") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('me')" id="me">
-        <i slot="icon" class="iconfont iconme"></i>
-        {{ $t("i18n.me") }}
-      </mt-tab-item>
-    </mt-tabbar>
+    <Tab></Tab>
   </div>
 </template>
 

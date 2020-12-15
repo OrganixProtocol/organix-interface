@@ -119,8 +119,6 @@ export default {
       localStorage.setItem("node", this.nodeList[this.radio]);
       this.node = this.nodeList[this.radio];
     }
-
-    console.log("APP.vue", this.radio, this.node);
   },
   methods: {
     changeNode() {
@@ -137,8 +135,6 @@ export default {
       } else {
         this.node = "";
       }
-
-      console.log(this.radio, this.node, this.customNode);
     },
     cancel() {
       this.$modal.hide("node-panel");

@@ -21,7 +21,7 @@
           <p>
             {{
               $t("i18n.mintDesc1", {
-                minStakeTime: $store.state.minStakingTimeStr 
+                minStakeTime: $store.state.minStakingTimeStr
               })
             }}
           </p>
@@ -240,7 +240,7 @@
     </modal>
 
     <!-- 交易弹窗 -->
-    <modal
+    <!-- <modal
       height="auto"
       classes="common-modal swap-modal"
       color="#49d663"
@@ -255,9 +255,6 @@
           <img src="../assets/modal/swap.png" class="modal-logo" alt />
           <h5 class="modal-title">{{ $t("i18n.exchange") }}</h5>
         </div>
-        <!-- <div class="modal-desc">{{ $t("i18n.exchangeDesc") }}</div> -->
-        <!-- <div class="modal-desc">{{ $t("i18n.reverseAssetsRule") }}</div> -->
-
         <div class="modal-desc">
           <p>
             <span
@@ -374,30 +371,6 @@
             <span class="em tips">{{
               parseFloat($store.state.feeRate / 1000000).toFixed(1) + "%"
             }}</span>
-            <!-- <span class="float-right">
-              <i
-                @click="refreshPrice()"
-                :class="[
-                  refreshingPrice ? 'loading' : '',
-                  'vertical-middle',
-                  'icon',
-                  'refresh'
-                ]"
-              ></i>
-              <span class="vertical-middle">{{ $t("i18n.updateTime") }}: </span>
-              <span
-                @click="showMsg($t('i18n.updateTimeTip'))"
-                class="em tips vertical-middle"
-                style="margin: 0 4px"
-              >
-                {{ updateTime }}
-              </span>
-              <i
-                @click="showMsg($t('i18n.updateTimeTip'))"
-                class="iconfont iconinfo vertical-middle"
-              ></i
-            >
-            </span> -->
           </div>
         </div>
         <div class="modal-action">
@@ -462,7 +435,7 @@
           </div>
         </div>
       </div>
-    </modal>
+    </modal> -->
 
     <!-- 领取弹窗 -->
     <modal
@@ -586,52 +559,7 @@
       </div>
     </modal>
 
-    <!-- 币种选择弹窗 -->
-
-    <modal
-      height="auto"
-      classes="symbol-modal"
-      color="#49d663"
-      :adaptive="true"
-      :clickToClose="true"
-      width="96%"
-      :maxWidth="420"
-      name="symbol-panel"
-    >
-      <div class="modal-bg">
-        <h3>{{ $t("i18n.selectToken") }}</h3>
-        <div class="token-wrap">
-          <div
-            class="token-item"
-            style="overflow: hidden"
-            v-for="synth in mySelectList"
-            @click="doSelectSymbol(synth.symbol)"
-            v-bind:key="synth.symbol"
-          >
-            <div class="vertical-middle" style="width: 50%; float: left">
-              <img
-                :src="
-                  'https://tp-statics.tokenpocket.pro/token/ogx/v2/' +
-                  synth.symbol +
-                  '.png'
-                "
-                alt=""
-                class="vertical-middle"
-                onerror="javascript:this.src='https://tp-statics.tokenpocket.pro/token/ogx/OGX.png'"
-              />
-              <span class="vertical-middle token-name">{{ synth.symbol }}</span>
-            </div>
-            <span
-              v-if="balanceObj[synth.symbol]"
-              class="vertical-middle"
-              style="width: 50%; float: left"
-              >{{ $t("i18n.bal") }}:
-              {{ balanceObj[synth.symbol] | fixedDeciaml2Str }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </modal>
+    
 
     <!-- 标准弹窗 -->
 
@@ -669,7 +597,9 @@
           }}</span>
           <span class="float-right"
             >清算延迟:
-            <span class="tips em">{{ $store.state.liquidationDelay }} {{$t('i18n.hour')}} </span>
+            <span class="tips em"
+              >{{ $store.state.liquidationDelay }} {{ $t("i18n.hour") }}
+            </span>
           </span>
         </div>
 
@@ -883,24 +813,7 @@
       <button @click="goEx()" class="primary-btn">ORGANIX EXCHANGE</button>
     </div> -->
 
-    <mt-tabbar v-model="selected" :fixed="true">
-      <mt-tab-item @click.native="go('home')" id="home">
-        <i slot="icon" class="iconfont iconhome"></i>
-        {{ $t("i18n.home") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('overview')" id="overview">
-        <i slot="icon" class="iconfont iconpie-chart"></i>
-        {{ $t("i18n.dashboard") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('store')" id="store">
-        <i slot="icon" class="iconfont iconstore"></i>
-        {{ $t("i18n.store") }}
-      </mt-tab-item>
-      <mt-tab-item @click.native="go('me')" id="me">
-        <i slot="icon" class="iconfont iconme"></i>
-        {{ $t("i18n.me") }}
-      </mt-tab-item>
-    </mt-tabbar>
+    <Tab></Tab>
 
     <!-- <div class="wrap global-info">
       <h3>我的信息</h3>

@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import Rank from './views/Rank.vue'
 import Overview from './views/Overview.vue'
 import Me from './views/Me.vue'
 import Store from './views/Store.vue'
+import Exchange from './views/Exchange.vue'
 
 Vue.use(Router)
 
@@ -26,9 +26,9 @@ export default new Router({
       component: Home
     },
     {
-      path: '/rank',
-      name: 'rank',
-      component: Rank
+      path: '/exchange',
+      name: 'exchange',
+      component: Exchange
     },
     {
       path: '/overview',

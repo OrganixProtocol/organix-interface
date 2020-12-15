@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash'
 import { all, resolve } from "core-js/fn/promise";
 import { parseFloat } from "core-js/fn/number";
+import Tab from "@/components/Tab.vue";
 
 const PROD_ENV = 'prod';
 
@@ -97,6 +98,9 @@ var myMixin = {
             lastStakingTime: 0,
             nowTime: new Date().getTime(),
             myExEntry: {},
+            myExEntryObj: {},
+            myExEntryList: [],
+            lastTradingTime: '',
             haveOldToken: false,
             oldTokenBal: '',
             isSwitchingOld: false
@@ -216,6 +220,9 @@ var myMixin = {
             clearInterval(this.nowTimer)
         }
     },
+    components: {
+        Tab
+    },
     created() {
         let nodeUrl = localStorage.getItem('node') || 'https://eos.blockeden.cn';
         let host = nodeUrl.split('://')[1].split(":")[0];
@@ -306,6 +313,11 @@ var myMixin = {
             this.nowTime = new Date().getTime();
         }, 2000);
 
+        // tab 
+        this.$store.commit('setSelectedTab', {
+            selected: this.$route.name
+        })
+
     },
     filters: {
         percent(val) {
@@ -328,7 +340,7 @@ var myMixin = {
             return val.toPrecision(6);
         },
         monthFormatTime(val) {
-            return dayjs(val * 1000).format('MM-DD HH:mm:ss')
+            return dayjs(val * 1000).format('MM-DD HH:mm')
         },
         formatTime(val) {
             return dayjs(val * 1000).format('YYYY-MM-DD HH:mm:ss')
@@ -336,9 +348,40 @@ var myMixin = {
     },
     methods: {
         go(tab) {
-
-            this.selected = tab;
             this.$router.push(tab);
+        },
+        settleOrder() {
+            if (this.$store.state.currentAccount) {
+                var actions = [];
+                _.forEach(Object.keys(this.myExEntryObj), item => {
+                    actions.push({
+                        account: MAIN_CONTRACT,
+                        name: 'settle',
+                        authorization: [{
+                            actor: this.$store.state.currentAccount,
+                            permission: this.$store.state.currentPermission || 'active'
+                        }],
+                        data: {
+                            account: this.$store.state.currentAccount,
+                            sym: '8,' + item
+                        }
+                    })
+                });
+
+                api.transact({
+                    actions: actions
+                }, {
+                    blocksBehind: 3,
+                    expireSeconds: 300, // 5分钟
+                }).then(res => {
+                    this.showMsg(this.$t('i18n.success'));
+                    this.getMyInfo();
+                    setTimeout(() => { this.getMyInfo(); }, 3000)
+
+                }).catch(err => {
+                    this.handleError(JSON.stringify(err));
+                })
+            }
         },
         login() {
             scatter
@@ -569,7 +612,7 @@ var myMixin = {
             this.inputMax();
         },
         swap() {
-            this.$modal.show('swap-panel');
+            this.$router.push('exchange');
         },
         inputSwap() {
             this.swapOutputAmount = parseFloat(this.swapInputAmount * this.price[this.inputSymbol] / this.price[this.outputSymbol]).toFixed(TOKEN_UNIT_NUM);
@@ -1212,15 +1255,28 @@ var myMixin = {
                     limit: 100
                 }).then(res => {
                     this.myExEntry = {};
+                    this.myExEntryObj = {};
+                    this.myExEntryList = [];
 
                     var exEntries = {}
+                    var exEntryObj = {}
+                    var exEntryList = [];
 
                     res.rows.forEach(item => {
+                        exEntryList = exEntryList.concat(item.ex_entry_list);
+                        exEntryObj[item.dest.split(',')[1]] = item.ex_entry_list;
                         exEntries[item.dest.split(',')[1]] = item.ex_entry_list[item.ex_entry_list.length - 1].timestamp;
                     })
 
+                    exEntryList = exEntryList.sort(function (a, b) {
+                        return b.timestamp - a.timestamp;
+                    })
 
+                    this.lastTradingTime = exEntryList.length ? exEntryList[0].timestamp : '';
+
+                    this.myExEntryObj = exEntryObj;
                     this.myExEntry = exEntries;
+                    this.myExEntryList = exEntryList;
 
                 }).catch(err => {
                     console.log(err);

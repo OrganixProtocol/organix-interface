@@ -17,7 +17,8 @@ export default new Vuex.Store({
         allSynthsList: [],
         synthsList: [],
         isMobile: true,
-        feeRate: ''
+        feeRate: '',
+        selected: 'home'
     },
     getter: {
 
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     mutations: {
         updateLang(state, data) {
             state.language = data ? data : 'en'
+        },
+        setSelectedTab(state, data) {
+            state.selected = data.selected;
         },
         setAccount(state, data) {
             state.currentAccount = data.account;
