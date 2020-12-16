@@ -352,6 +352,15 @@ var myMixin = {
         },
         settleOrder() {
             if (this.$store.state.currentAccount) {
+                try {
+                    _hmt.push([
+                        "_trackEvent",
+                        "settleOrder",
+                        this.$store.state.currentAccount,
+                        this.myExEntryList.length
+                    ]);
+                } catch (err) { }
+
                 var actions = [];
                 _.forEach(Object.keys(this.myExEntryObj), item => {
                     actions.push({
@@ -376,7 +385,7 @@ var myMixin = {
                 }).then(res => {
                     this.showMsg(this.$t('i18n.success'));
                     this.getMyInfo();
-                    setTimeout(() => { this.getMyInfo(); }, 3000)
+                    setTimeout(() => { this.getMyInfo(); }, 5000)
 
                 }).catch(err => {
                     this.handleError(JSON.stringify(err));
@@ -612,6 +621,16 @@ var myMixin = {
             this.inputMax();
         },
         swap() {
+            if (_hmt) {
+                try {
+                    _hmt.push([
+                        "_trackEvent",
+                        "tabClick",
+                        'exchangeBtn',
+                        this.$store.state.currentAccount || "guest"
+                    ]);
+                } catch (err) { }
+            }
             this.$router.push('exchange');
         },
         inputSwap() {

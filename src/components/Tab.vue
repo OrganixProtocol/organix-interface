@@ -31,6 +31,17 @@ export default {
     go(tab) {
       this.$store.commit("setSelectedTab", { selected: tab });
       this.$router.push(tab);
+
+      if (_hmt) {
+        try {
+          _hmt.push([
+            "_trackEvent",
+            "tabClick",
+            tab,
+            this.$store.state.currentAccount || "guest"
+          ]);
+        } catch (err) {}
+      }
     }
   }
 };
