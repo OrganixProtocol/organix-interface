@@ -149,7 +149,11 @@ const zh = {
     wrongNode: '请填写正确的节点地址',
     whatisdebt: '铸造OUSD后，你的初始债务等于铸造的OUSD数量，债务将随着所有合成资产持有人的收益和损失而波动。当系统中合成资产因为价格增长导致总价值增加时，系统中的总债务和个人的债务量都会增加。要解锁你抵押的OGX，您需要还清您的债务。',
     orderToBeSettled: '待结算的交易',
-    settleAll: '全部结算'
+    settleAll: '全部结算',
+    time: '时间',
+    unsettleAmount: '结算前成交数量',
+    orderList: '交易记录',
+    coming: '即将上线'
   }
 };
 

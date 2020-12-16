@@ -216,6 +216,86 @@
       </div>
     </div>
 
+    <div class="wrap info" v-if="myExEntryList.length">
+      <h3>
+        <span @click="showSettleDetail = !showSettleDetail">
+          {{ $t("i18n.orderToBeSettled") }} ({{ myExEntryList.length }})</span
+        >
+        <span
+          class="float-right settle-all"
+          v-if="
+            lastTradingTime + $store.state.settleTime < parseInt(nowTime / 1000)
+          "
+          @click="settleOrder()"
+          >{{ $t("i18n.settleAll") }}</span
+        >
+        <span class="float-right" v-else>
+          {{
+            lastTradingTime +
+            $store.state.settleTime -
+            parseInt(nowTime / 1000)
+          }}s
+        </span>
+      </h3>
+      <!-- <div v-for="order in myExEntryList">
+        {{ order.src.split(",")[1] }} -> {{ order.dest.split(",")[1] }}
+      </div> -->
+      <!-- <div v-show="showSettleDetail">
+        {{ $t("i18n.settleTips") }}
+      </div> -->
+      <!-- <div
+        v-show="showSettleDetail"
+        class="settle-wrap"
+        v-for="(orderList, key) in myExEntryObj"
+      >
+        <div>
+          <img
+            :src="
+              'https://tp-statics.tokenpocket.pro/token/ogx/v2/' + key + '.png'
+            "
+            alt=""
+            class="settle-symbol vertical-middle"
+            onerror="javascript:this.src='https://tp-statics.tokenpocket.pro/token/ogx/OGX.png'"
+          />
+          <span class="vertical-middle">
+            {{ key }} ({{ orderList.length }})
+            <span v-if="orderList.length === 12">({{ $t("i18n.full") }})</span>
+          </span>
+          <span
+            class="float-right link"
+            v-if="
+              myExEntry[key] + $store.state.settleTime <
+              parseInt(nowTime / 1000)
+            "
+            >结算</span
+          >
+          <span v-else class="float-right"
+            >{{
+              myExEntry[key] +
+              $store.state.settleTime -
+              parseInt(nowTime / 1000)
+            }}s
+          </span>
+        </div>
+        <div class="order-list">
+          <table>
+            <tr>
+              <th>{{ $t("i18n.time") }}</th>
+              <th>{{ $t("i18n.unsettleAmount") }}</th>
+            </tr>
+            <tr class="order-item" v-for="item in orderList">
+              <td>
+                {{ item.timestamp | monthFormatTime }}
+              </td>
+              <td>
+                {{ parseFloat(item.amount_received) | fixedDeciaml }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div> -->
+    </div>
+
     <div class="wrap info">
       <h3>{{ $t("i18n.howtogetOGX") }} (Defi / Dex)</h3>
 
@@ -409,5 +489,40 @@ export default {
   color: #000;
   background-color: @mainSingleColor;
   background: @mainColor;
+}
+.settle-wrap {
+  padding: 8px;
+}
+
+.settle-all {
+  padding: 0 8px;
+}
+
+.settle-symbol {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.link {
+  cursor: pointer;
+  padding: 2px;
+}
+
+.order-list {
+  padding: 4px 0;
+
+  table {
+    width: 100%;
+
+    th,
+    td {
+      text-align: left;
+    }
+  }
+}
+
+.order-item {
+  padding: 6px 0;
 }
 </style>

@@ -261,68 +261,9 @@
         </button>
       </div>
     </div>
-    {{ myExEntryObj.length }}
-    <div class="wrap info" v-if="myExEntryList.length">
-      <h3>
-        {{ $t("i18n.orderToBeSettled") }} ({{ myExEntryList.length }})
-        <span
-          class="float-right"
-          v-if="
-            lastTradingTime + $store.state.settleTime < parseInt(nowTime / 1000)
-          "
-          @click="settleOrder()"
-          >{{ $t("i18n.settleAll") }}</span
-        >
-        <span class="float-right" v-else>
-          {{
-            lastTradingTime +
-            $store.state.settleTime -
-            parseInt(nowTime / 1000)
-          }}s
-        </span>
-      </h3>
-      <!-- <div v-for="order in myExEntryList">
-        {{ order.src.split(",")[1] }} -> {{ order.dest.split(",")[1] }}
-      </div> -->
-
-      <!-- <div class="settle-wrap" v-for="(orderList, key) in myExEntryObj"> -->
-      <!-- <div>
-          <img
-            :src="
-              'https://tp-statics.tokenpocket.pro/token/ogx/v2/' + key + '.png'
-            "
-            alt=""
-            class="settle-symbol vertical-middle"
-            onerror="javascript:this.src='https://tp-statics.tokenpocket.pro/token/ogx/OGX.png'"
-          />
-          <span class="vertical-middle">
-            {{ orderList.length }}
-            个未结算交易 <span v-if="orderList.length === 12">(满)</span>
-          </span>
-          <span
-            class="float-right link"
-            v-if="
-              myExEntry[key] + $store.state.settleTime <
-              parseInt(nowTime / 1000)
-            "
-            >结算</span
-          >
-          <span v-else class="float-right"
-            >{{
-              myExEntry[key] +
-              $store.state.settleTime -
-              parseInt(nowTime / 1000)
-            }}s
-          </span>
-        </div> -->
-
-      <!-- <div v-for="item in orderList">
-          订单时间：{{ item.timestamp | monthFormatTime }} 数量:
-          {{ parseFloat(item.amount_received) | fixedDeciaml }}
-        </div> -->
-      <!-- </div> -->
-    </div>
-
+    <!-- <div class="wrap info">
+      <h3>{{ $t("i18n.orderList") }} ({{ $t("i18n.coming") }})</h3>
+    </div> -->
     <Tab></Tab>
   </div>
 </template>
@@ -351,6 +292,10 @@ export default {
   padding: 8px;
 }
 
+.settle-all {
+  padding: 0 8px;
+}
+
 .settle-symbol {
   width: 24px;
   height: 24px;
@@ -359,6 +304,20 @@ export default {
 
 .link {
   cursor: pointer;
+  padding: 2px;
+}
+
+.order-list {
+  padding: 4px 0;
+}
+
+.order-item {
+  padding: 6px 0;
+}
+
+.iconfont.iconexchange1 {
+  font-size: 18px;
+  display: inline-block;
   padding: 2px;
 }
 </style>

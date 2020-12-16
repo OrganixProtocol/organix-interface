@@ -103,7 +103,8 @@ var myMixin = {
             lastTradingTime: '',
             haveOldToken: false,
             oldTokenBal: '',
-            isSwitchingOld: false
+            isSwitchingOld: false,
+            showSettleDetail: false
         };
     },
     computed: {

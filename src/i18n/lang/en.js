@@ -149,7 +149,10 @@ const en = {
     wrongNode: 'Please fill in a correct address',
     whatisdebt: 'Your debt begins as the amount of OUSD you initially mint, and fluctuates according to gains or losses made by other Synth holders. Any time someone holds a Synth that appreciates in value, that gain is distributed proportionally between all the staked OGX holders’ debts. To unlock all your staked OGX, you must first pay off your debt.',
     orderToBeSettled: 'Unsettled orders',
-    settleAll: 'Settle All'
+    settleAll: 'Settle All',
+    time: 'Time',
+    orderList: 'Order List',
+    coming: 'Coming Soon'
   }
 };
 
