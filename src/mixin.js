@@ -669,7 +669,7 @@ var myMixin = {
                     this.showMsg(this.$t('i18n.swapSuccess'));
                     // this.$modal.hide('swap-panel');
                     this.getMyInfo();
-                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 3000)
+                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 5000)
                     this.swapInputAmount = '';
                     this.swapOutputAmount = '';
                 }).catch(err => {
@@ -701,7 +701,7 @@ var myMixin = {
                     this.showMsg(this.$t('i18n.claimSuccess'));
                     // this.$modal.hide('store-panel');
                     this.getMyInfo();
-                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 3000)
+                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 5000)
                 }).catch(err => {
                     this.isVestClaiming = false;
                     this.handleError(JSON.stringify(err));
@@ -731,7 +731,7 @@ var myMixin = {
                     this.showMsg(this.$t('i18n.claimSuccess'));
                     // this.$modal.hide('store-panel');
                     this.getMyInfo();
-                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 3000)
+                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 5000)
                 }).catch(err => {
                     this.isVestClaiming = false;
                     this.handleError(JSON.stringify(err));
@@ -764,7 +764,7 @@ var myMixin = {
                     this.showMsg(this.$t('i18n.claimSuccess'));
                     this.$modal.hide('claim-panel');
                     this.getMyInfo();
-                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 3000)
+                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 5000)
                 }).catch(err => {
                     this.isClaiming = false;
                     this.handleError(JSON.stringify(err));
