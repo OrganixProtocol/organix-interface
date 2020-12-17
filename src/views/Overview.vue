@@ -51,8 +51,7 @@
             ${{
               parseFloat(
                 (parseFloat(nextFees) /
-                  parseFloat($store.state.feeRate / 100000)) *
-                  0.9 *
+                  (parseFloat($store.state.feeRate / 100000) * 0.9)) *
                   1000
               ) | fixedDeciaml2Str
             }}
