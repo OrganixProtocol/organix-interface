@@ -225,7 +225,7 @@ var myMixin = {
         Tab
     },
     created() {
-        let nodeUrl = localStorage.getItem('node') || 'https://eos.blockeden.cn';
+        let nodeUrl = localStorage.getItem('node') || 'https://eos.greymass.com';
         let host = nodeUrl.split('://')[1].split(":")[0];
         let port = nodeUrl.split('://')[1].split(":")[1] || (nodeUrl.split('://')[0] === 'https' ? 443 : 80);
         let networkConfig = {
@@ -658,7 +658,7 @@ var myMixin = {
                             "source_amount": FIXED(parseFloat(this.swapInputAmount), TOKEN_UNIT_NUM) + ' ' + this.inputSymbol,
                             "dest_currency_key": TOKEN_UNIT_NUM + "," + this.outputSymbol,
                             // "destination_address": this.$store.state.currentAccount,
-                            "memo": (this.referAccount && this.referAccount !== this.$store.state.currentAccount && this.referAccount !== DEFAULT_REFER) ? this.referAccount : (this.referAccount !== DEFAULT_REFER) ? DEFAULT_REFER : ''
+                            "memo": (this.referAccount && this.referAccount !== this.$store.state.currentAccount && this.referAccount !== DEFAULT_REFER) ? this.referAccount : (this.$store.state.currentAccount === DEFAULT_REFER) ? '' : DEFAULT_REFER
                         }
                     }]
                 }, {
@@ -851,23 +851,22 @@ var myMixin = {
             if (list.length) {
                 // var totalSynthInUsd = 0;
                 var balList = []
+                var balObj = {};
                 list.forEach(synth => {
                     if (parseFloat(synth.amount) > 0) {
 
-                        this.balanceObj[synth.symbol] = synth.amount;
+                        balObj[synth.symbol] = synth.amount;
 
                         if (priceObj[synth.symbol]) {
                             synth.price = priceObj[synth.symbol];
-                            // totalSynthInUsd += parseFloat(parseFloat(synth.price) * parseFloat(synth.amount))
                         }
 
                         balList.push(synth);
                     }
-
-
                 })
-                // balList
+                this.balanceObj = balObj;
 
+                // balList
                 balList.sort((a, b) => {
                     return parseFloat(parseFloat(b.price) * parseFloat(b.amount)) - parseFloat(parseFloat(a.price) * parseFloat(a.amount))
                 })

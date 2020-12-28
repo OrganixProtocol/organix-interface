@@ -397,9 +397,6 @@ export default {
       );
     }
   },
-  created() {
-    this.selected = "me";
-  },
   mounted() {
     this.initCopy();
   },

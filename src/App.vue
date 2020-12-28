@@ -84,12 +84,12 @@ export default {
   data() {
     return {
       nodeList: [
-        "https://eos.blockeden.cn",
         "https://eos.greymass.com",
-        "https://eospush.tokenpocket.pro",
-        "https://api.eosn.io",
-        "https://api.eoslaomao.com",
         "https://eos.newdex.one",
+        "https://eos.blockeden.cn",
+        "https://eospush.tokenpocket.pro",
+        "https://api.eoslaomao.com",
+        "https://api.eosn.io",
         "https://api.eossweden.se",
         "https://nodes.get-scatter.com",
         "https://mainnet.meet.one"
