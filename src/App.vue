@@ -310,6 +310,11 @@ ul {
   margin-right: 8px;
 }
 
+.inline-block {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .node-switch {
   border: 1px solid #203436;
   border-radius: 100px;
@@ -382,6 +387,10 @@ input::-webkit-input-placeholder {
 button.disabled {
   background: #ddd !important;
   color: #fff;
+}
+
+.iconfont.iconopen-link {
+  font-size: 12px;
 }
 
 a,

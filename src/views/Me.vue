@@ -374,6 +374,17 @@
       </div>
     </div>
 
+    <div class="wrap info links">
+      <h3>
+        <span class="inline-block" @click="gotoGuide()"
+          >{{ $t("i18n.guide") }} <i class="iconfont iconopen-link"></i
+        ></span>
+        <span class="inline-block" @click="gotoWebsite()"
+          >{{ $t("i18n.website") }} <i class="iconfont iconopen-link"></i
+        ></span>
+      </h3>
+    </div>
+
     <Tab></Tab>
   </div>
 </template>
@@ -401,6 +412,15 @@ export default {
     this.initCopy();
   },
   methods: {
+    gotoWebsite() {
+      location.href = "https://www.ogx.network/";
+    },
+    gotoGuide() {
+      location.href =
+        this.$i18n.locale === "en"
+          ? "https://organix.gitbook.io/en/"
+          : "https://organix.gitbook.io/cn/";
+    },
     initCopy() {
       var _this = this;
 
@@ -462,6 +482,12 @@ export default {
   position: relative;
   box-sizing: border-box;
   margin: 16px 0;
+}
+
+.links {
+  span {
+    margin-right: 28px;
+  }
 }
 
 .ref-link {

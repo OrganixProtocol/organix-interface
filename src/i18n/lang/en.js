@@ -27,7 +27,7 @@ const en = {
     currentSwapPrice: 'Price',
     fee: 'Fee',
     claimReward: 'Claim',
-    claimRewardDesc: 'If you have staked your OGX and minted OUSD, you are eligible to collect two kinds of rewards: OGX staking rewards and exchange fees',
+    claimRewardDesc: 'If you have staked your OGX and minted OUSD, you are eligible to collect two kinds of rewards: OGX staking rewards (locked for 1 year) and exchange fees',
     nextRoundReward: 'est rewards of next round',
     nextRoundRewardTip: 'After this round finished, you can start to claim this part of the reward',
     estApr: 'est APR',
@@ -152,7 +152,9 @@ const en = {
     settleAll: 'Settle All',
     time: 'Time',
     orderList: 'Order List',
-    coming: 'Coming Soon'
+    coming: 'Coming Soon',
+    guide: 'User Guide',
+    website: "Organix Website"
   }
 };
 

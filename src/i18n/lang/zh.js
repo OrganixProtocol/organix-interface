@@ -27,7 +27,7 @@ const zh = {
     currentSwapPrice: '当前兑换价格',
     fee: '手续费',
     claimReward: '领取奖励',
-    claimRewardDesc: '如果你抵押OGX铸造了OUSD并且抵押率不小于系统最低抵押率，就有资格每周获得两种奖励：OGX新增代币奖励和交易所产生的手续费奖励',
+    claimRewardDesc: '如果你抵押OGX铸造了OUSD并且抵押率不小于系统最低抵押率，就有资格每周获得两种奖励：OGX新增代币奖励(锁定1年)和交易所产生的手续费奖励',
     nextRoundReward: '下一轮预估奖励',
     nextRoundRewardTip: '在本轮进行抵押铸造产生的奖励将在下一轮领取，下一轮领取时间为本轮结束后',
     estApr: '预估年化',
@@ -153,7 +153,9 @@ const zh = {
     time: '时间',
     unsettleAmount: '结算前成交数量',
     orderList: '交易记录',
-    coming: '即将上线'
+    coming: '即将上线',
+    guide: '新手引导',
+    website: "官网"
   }
 };
 
