@@ -257,10 +257,18 @@
           <h5 class="modal-title">{{ $t("i18n.lpReward") }}</h5>
         </div>
         <div class="modal-desc">
-          {{ $t("i18n.lpRewardDesc") }}
+          {{ $t("i18n.lpRewardDesc") }}.
+          <a
+            :href="
+              $i18n.locale === 'en'
+                ? 'https://organix.gitbook.io/cn/staking/ru-he-huo-de-zuo-shi-jiang-li'
+                : 'https://organix.gitbook.io/cn/staking/ru-he-huo-de-zuo-shi-jiang-li'
+            "
+          >
+            {{ $t("i18n.details") }} <i class="iconfont iconopen-link"></i>
+          </a>
         </div>
         <div class="divider"></div>
-
         <div class="lp-list-wrap">
           <div v-for="lp in lpRewardList" class="lp-wrap wrap info">
             <div :class="lp.type || 'dfs'">
@@ -947,6 +955,18 @@
             {{ $t("i18n.exchange1") }} <br />{{ $t("i18n.exchange2") }}
           </div>
         </div>
+        <div class="action-wrap info" @click="checkLP()">
+          <div class="action">
+            <img src="../assets/lp.png" alt />
+          </div>
+          <div class="action-text">{{ $t("i18n.lpReward") }}</div>
+          <div class="action-desc">
+            {{ $t("i18n.lpReward1") }} <br />{{ $t("i18n.lpReward2") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="clearfix">
         <div class="action-wrap info" @click="claim()">
           <div class="action">
             <img src="../assets/claim.png" alt />
@@ -955,18 +975,6 @@
           <div class="action-desc">
             {{ $t("i18n.reward1") }} <br />
             {{ $t("i18n.reward2") }}
-          </div>
-        </div>
-      </div>
-
-      <div class="clearfix">
-        <div class="action-wrap info" @click="checkLP()">
-          <div class="action">
-            <img src="../assets/lp.png" alt />
-          </div>
-          <div class="action-text">{{ $t("i18n.lpReward") }}</div>
-          <div class="action-desc">
-            {{ $t("i18n.lpReward1") }} <br />{{ $t("i18n.lpReward2") }}
           </div>
         </div>
       </div>
