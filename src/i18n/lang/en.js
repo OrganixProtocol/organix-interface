@@ -163,7 +163,9 @@ const en = {
     manage: 'Manage',
     claimToEscrow: 'Claim to escrow',
     canClaimed: 'Can claim',
-    claimToEscrowTip: 'After {claimTime} you can claim to escrow'
+    claimToEscrowTip: 'After {claimTime} you can claim to escrow',
+    dfsTips: 'When started you need to execute a new market-making operation in DFS once.',
+    startAt: 'Started at '
   }
 };
 

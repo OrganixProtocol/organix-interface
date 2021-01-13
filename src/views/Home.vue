@@ -363,12 +363,12 @@
                       v-if="!(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"
                       class="tips"
                     >
-                      项目启动后，参与挖矿需要重新发起一笔做市操作。
+                      {{ $t("i18n.dfsTips") }}
                     </p>
                   </div>
                 </div>
                 <div class="coming-div" v-else>
-                  <h3>将于 {{ lp.start | formatTime }} 开启</h3>
+                  <h3>{{ $t("i18n.startAt") }}: {{ lp.start | formatTime }}</h3>
                 </div>
               </div>
             </div>
