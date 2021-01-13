@@ -154,7 +154,16 @@ const en = {
     orderList: 'Order List',
     coming: 'Coming Soon',
     guide: 'User Guide',
-    website: "Organix Website"
+    website: "Organix Website",
+    lpReward: "LP Reward",
+    lpReward1: "Get reward",
+    lpReward2: "providing liquidity",
+    lpRewardDesc: 'Get ogx rewards by providing liquidity',
+    currentEpochClaimed: 'Current epoch claimed',
+    manage: 'Manage',
+    claimToEscrow: 'Claim to escrow',
+    canClaimed: 'Can claim',
+    claimToEscrowTip: 'After {claimTime} you can claim to escrow'
   }
 };
 

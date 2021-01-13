@@ -12,7 +12,6 @@ const PROD_ENV = 'prod';
 
 const env = PROD_ENV;
 
-
 let requiredFields = '';
 let network = '';
 let rpc = '';
@@ -28,8 +27,29 @@ const DEFAULT_REFER = env === PROD_ENV ? 'tpdappincome' : 'itokenpocket';
 const MAIN_CONTRACT = env === PROD_ENV ? "core.ogx" : 'organixtokep';
 const OLD_CONTRACT = env === PROD_ENV ? "organixtoken" : "ogxtokentok1";
 const SWITCH_CONTRACT = env === PROD_ENV ? 'switch.ogx' : "ogxswitch111";
+const CHAINID = env === PROD_ENV ? 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906' : '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'
 
 const MAIN_SYMBOL = "OGX";
+
+const LP_CONTRACT = 'pools.ogx';
+
+const DFS_CONTRACT = 'defisswapcnt';
+
+
+const LP_PAIR = {
+    637: {
+        token0: 'OUSD-core.ogx',
+        token1: 'USDT-tethertether',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OUSD.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/USDT-tethertether.png'
+    },
+    12: {
+        token0: 'OUSD-core.ogx',
+        token1: 'USDT-tethertether',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OUSD.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/USDT-tethertether.png'
+    }
+}
 
 
 const FIXED = function (num, n) {
@@ -87,6 +107,7 @@ var myMixin = {
             isSwapping: false,
             isClaiming: false,
             isVestClaiming: false,
+            isLpRewarding: false,
             priceTimer: null,
             nowTimer: null,
             selected: '',
@@ -104,7 +125,11 @@ var myMixin = {
             haveOldToken: false,
             oldTokenBal: '',
             isSwitchingOld: false,
-            showSettleDetail: false
+            showSettleDetail: false,
+            lpRewardList: [],
+            lpRewardApy: {},
+            myLpTokenObj: {},
+            lpPairMap: LP_PAIR
         };
     },
     computed: {
@@ -220,12 +245,16 @@ var myMixin = {
         if (this.nowTimer) {
             clearInterval(this.nowTimer)
         }
+        if (this.rewardTimer) {
+            clearInterval(this.rewardTimer)
+        }
     },
     components: {
         Tab
     },
     created() {
         let nodeUrl = localStorage.getItem('node') || 'https://eos.greymass.com';
+        // let nodeUrl = "http://api.kylin.alohaeos.com";
         let host = nodeUrl.split('://')[1].split(":")[0];
         let port = nodeUrl.split('://')[1].split(":")[1] || (nodeUrl.split('://')[0] === 'https' ? 443 : 80);
         let networkConfig = {
@@ -233,12 +262,14 @@ var myMixin = {
             host: host,
             port: port,
             protocol: nodeUrl.split('://')[0],
-            chainId: "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906"
+            chainId: CHAINID
         }
 
         network = ScatterJS.Network.fromJson(networkConfig);
 
         rpc = new JsonRpc(network.fullhost());
+
+
         requiredFields = { accounts: [network] };
 
         ScatterJS.plugins(new ScatterEOS());
@@ -310,6 +341,10 @@ var myMixin = {
             this.getMyInfo();
         }, 30000)
 
+        this.rewardTimer = setInterval(() => {
+            this.checkMyLP();
+        }, 10000);
+
         this.nowTimer = setInterval(() => {
             this.nowTime = new Date().getTime();
         }, 2000);
@@ -350,6 +385,36 @@ var myMixin = {
     methods: {
         go(tab) {
             this.$router.push(tab);
+        },
+        claimLp(mid) {
+            if (this.$store.state.currentAccount) {
+                api.transact({
+                    actions: [{
+                        account: LP_CONTRACT,
+                        name: 'claim',
+                        authorization: [{
+                            actor: this.$store.state.currentAccount,
+                            permission: this.$store.state.currentPermission || 'active'
+                        }],
+                        data: {
+                            mid: mid,
+                            user: this.$store.state.currentAccount
+                        }
+                    }]
+                }, {
+                    blocksBehind: 3,
+                    expireSeconds: 300, // 5分钟
+                }).then(res => {
+                    this.showMsg(this.$t('i18n.success'));
+                    this.getMyInfo();
+                    this.checkMyLP();
+                    setTimeout(() => { this.getMyInfo(); this.checkMyLP() }, 3000)
+
+                }).catch(err => {
+                    this.isSwitchingOld = false;
+                    this.handleError(JSON.stringify(err));
+                })
+            }
         },
         settleOrder() {
             if (this.$store.state.currentAccount) {
@@ -473,15 +538,14 @@ var myMixin = {
             this.ogxWalletBalance = '';
             this.ogxStoreBalance = '';
         },
-        checkLiquidation() {
-            rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'lentry' }).then(res => {
-                this.liquidationList = res.rows;
-            })
-            this.$modal.show('liquidation-panel');
-        },
+        // checkLiquidation() {
+        //     rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'lentry' }).then(res => {
+        //         this.liquidationList = res.rows;
+        //     })
+        //     this.$modal.show('liquidation-panel');
+        // },
         mint() {
             this.$modal.show('mint-panel');
-
         },
         doMint() {
             if (this.$store.state.currentAccount && this.$store.state.targetRatio <= this.mintRatio) {
@@ -780,7 +844,8 @@ var myMixin = {
             this.$modal.hide('swap-panel');
             this.$modal.hide('claim-panel');
             this.$modal.hide('store-panel');
-            this.$modal.hide('liquidation-panel');
+            // this.$modal.hide('liquidation-panel');
+            this.$modal.hide('lp-panel');
         },
         showMsg(msg) {
             this.msg = msg;
@@ -1161,7 +1226,6 @@ var myMixin = {
         },
         getLiquidationConfig() {
 
-
         },
         getMyNextRound(initIndex, closeDebt, percent, fees, rewards) {
             var init = rpc.get_table_rows({
@@ -1176,6 +1240,108 @@ var myMixin = {
                 this.estClaimableFee = parseFloat(fees) * percent / LEDGER_UNIT * closeDebt / res.rows[0].debt;
                 this.estClaimableReward = parseFloat(rewards) * percent / LEDGER_UNIT * closeDebt / res.rows[0].debt;
             })
+
+        },
+        checkLP() {
+            this.$modal.show('lp-panel');
+
+            this.checkMyLP();
+        },
+        manageLP(type, id) {
+
+            // dfs
+            if (type === 'dfs' || !type) {
+                location.href = "https://apps.defis.network/market/" + id
+            }
+            else {
+                // box
+            }
+
+        },
+        checkMyLP() {
+            rpc.get_table_rows({
+                json: true,
+                code: LP_CONTRACT,
+                scope: LP_CONTRACT,
+                table: 'ponds',
+                limit: 10
+            }).then(res => {
+                this.lpRewardList = res.rows;
+
+                res.rows.forEach(lp => {
+                    var mid = lp.id;
+
+                    // get dfs market info
+                    rpc.get_table_rows({
+                        json: true,
+                        code: DFS_CONTRACT,
+                        scope: DFS_CONTRACT,
+                        table: 'markets',
+                        lower_bound: 637,
+                        upper_bound: 637,
+                        limit: 1
+                    }).then(res => {
+                        var market = res.rows[0];
+
+                        // todo add other tokens
+                        var marketTotalUsd = market.reserve0.indexOf('USDT') ? (parseFloat(market.reserve0) * 2) : market.reserve1.indexOf('USDT') ? (parseFloat(market.reserve1) * 2) : 0;
+
+                        var totalRewadUsd = this.price[MAIN_SYMBOL] * parseFloat(lp.weight)
+                        var totalStakedUsd = lp.total_token * (marketTotalUsd / market.liquidity_token)
+                        var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
+                        console.log(apy);
+
+                        this.lpRewardApy[mid] = apy
+                    })
+
+                    // get my info as a miner
+                    if (this.$store.state.currentAccount) {
+                        rpc.get_table_rows({
+                            json: true,
+                            code: LP_CONTRACT,
+                            scope: mid,
+                            table: 'miners',
+                            lower_bound: this.$store.state.currentAccount + ' ',
+                            upper_bound: this.$store.state.currentAccount + ' ',
+                            limit: 1
+                        }).then(res => {
+                            if (res.rows.length) {
+                                var miner = res.rows[0];
+                                var canClaimTime = new Date((miner.last_claimed * 1000) + 604800000);
+                                var canClaimToEscrow = new Date().getTime() >= canClaimTime;
+                                var nextClaimTime = dayjs(canClaimTime).format('MM-DD: HH:mm:ss');
+
+                                var closeTime = _.min([parseInt(new Date().getTime() / 1000), lp.period_finish]);
+
+                                var amount = (closeTime - lp.last_update_time) * parseFloat(lp.reward_rate) / lp.total_token;
+                                var rewardPerToken = parseFloat(lp.reward_pt_stored) + amount;
+
+                                var left = rewardPerToken - parseFloat(miner.reward_per_token_paid);
+                                var canClaim = miner.token * left > 0 ? miner.token * left : 0;
+
+
+                                miner.canClaim = canClaim
+                                miner.nextClaimTime = nextClaimTime;
+                                miner.canClaimToEscrow = canClaimToEscrow;
+                                this.myLpTokenObj[mid] = miner;
+
+                            }
+                        })
+                    }
+
+
+                })
+
+
+
+            })
+
+
+
+
+
+
+
 
         },
         getMyInfo() {

@@ -385,8 +385,9 @@ input::-webkit-input-placeholder {
 }
 
 button.disabled {
-  background: #ddd !important;
+  background: #ccc !important;
   color: #fff;
+  border: #ddd;
 }
 
 .iconfont.iconopen-link {

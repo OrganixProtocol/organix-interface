@@ -239,6 +239,191 @@
       </div>
     </modal>
 
+    <!-- LP modal -->
+
+    <modal
+      height="auto"
+      classes="common-modal"
+      color="#49d663"
+      :adaptive="true"
+      :clickToClose="true"
+      width="96%"
+      :maxWidth="420"
+      name="lp-panel"
+    >
+      <div class="modal-bg">
+        <div class="modal-top">
+          <img src="../assets/modal/lp.png" class="modal-logo" alt />
+          <h5 class="modal-title">{{ $t("i18n.lpReward") }}</h5>
+        </div>
+        <div class="modal-desc">
+          {{ $t("i18n.lpRewardDesc") }}
+        </div>
+        <div class="divider"></div>
+
+        <div class="lp-list-wrap">
+          <div v-for="lp in lpRewardList" class="lp-wrap wrap info">
+            <div :class="lp.type || 'dfs'">
+              <div class="lp-detail">
+                <h4>
+                  {{ lpPairMap[lp.id].token0.split("-")[0] }}-{{
+                    lpPairMap[lp.id].token1.split("-")[0]
+                  }}
+                  <span class="lp-token-img">
+                    <img :src="lpPairMap[lp.id].token0Url" alt="" />
+                    <img :src="lpPairMap[lp.id].token1Url" alt="" />
+                  </span>
+                  <span class="float-right success-color">
+                    APY: {{ lpRewardApy[lp.id] | percent }}</span
+                  >
+                </h4>
+
+                <div class="divider"></div>
+                <div v-if="nowTime > lp.start * 1000" class="lp-detail">
+                  <div class="clearfix">
+                    <div class="col-2 box">
+                      <span
+                        >Token:
+                        {{
+                          (myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token) ||
+                          0
+                        }}
+                      </span>
+                      <br />
+
+                      <button
+                        @click="manageLP(lp.type, lp.id)"
+                        class="primary-btn small-btn"
+                      >
+                        {{ $t("i18n.manage") }}
+                        <i class="iconfont iconopen-link"></i>
+                      </button>
+                    </div>
+                    <div class="col-2 box">
+                      <span>
+                        {{ $t("i18n.canClaimed") }}:
+                        {{
+                          myLpTokenObj[lp.id] &&
+                          parseFloat(myLpTokenObj[lp.id].canClaim).toFixed(4)
+                        }}
+                        OGX</span
+                      >
+                      <br />
+                      <button
+                        v-if="
+                          myLpTokenObj[lp.id] &&
+                          parseFloat(myLpTokenObj[lp.id].canClaim) > 0
+                        "
+                        class="primary-btn small-btn"
+                        @click="claimLp(lp.id)"
+                      >
+                        {{ $t("i18n.claim") }}
+                      </button>
+                      <button v-else class="primary-btn disabled small-btn">
+                        {{ $t("i18n.claim") }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="divider"></div>
+                  <div class="clearfix">
+                    <div class="col-1">
+                      <span>
+                        {{ $t("i18n.currentEpochClaimed") }}:
+                        {{
+                          myLpTokenObj[lp.id] &&
+                          parseFloat(
+                            parseFloat(myLpTokenObj[lp.id].claimed) +
+                              parseFloat(myLpTokenObj[lp.id].reward)
+                          ).toFixed(4) + " OGX"
+                        }}
+                      </span>
+                      <br />
+                      <button
+                        v-if="
+                          myLpTokenObj[lp.id] &&
+                          myLpTokenObj[lp.id].canClaimToEscrow
+                        "
+                        @click="claim(lp.id)"
+                        class="primary-btn small-btn"
+                      >
+                        {{ $t("i18n.claimToEscrow") }}
+                      </button>
+                      <button class="primary-btn small-btn disabled" v-else>
+                        {{
+                          $t("i18n.claimToEscrowTip", {
+                            claimTime:
+                              myLpTokenObj[lp.id] &&
+                              myLpTokenObj[lp.id].nextClaimTime
+                          })
+                        }}
+                      </button>
+                    </div>
+                    <p
+                      v-if="!(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"
+                      class="tips"
+                    >
+                      项目启动后，参与挖矿需要重新发起一笔做市操作。
+                    </p>
+                  </div>
+                </div>
+                <div class="coming-div" v-else>
+                  <h3>将于 {{ lp.start | formatTime }} 开启</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lp-wrap wrap info disabled">
+            <div class="defibox">
+              <div class="lp-detail">
+                <h4>
+                  ???-???
+                  <span class="lp-token-img">
+                    <img
+                      src="https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png"
+                      alt=""
+                    />
+                    <img
+                      src="https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png"
+                      alt=""
+                    />
+                  </span>
+                  <span class="float-right success-color"> APY: ???%</span>
+                </h4>
+
+                <div class="divider"></div>
+                <div class="lp-detail">
+                  <div class="col-2 box">
+                    <span>Token: xxxx</span>
+                    <br />
+
+                    <button class="primary-btn small-btn">
+                      {{ $t("i18n.manage") }}
+                    </button>
+                  </div>
+                  <div class="col-2 box">
+                    <span>{{ $t("i18n.reward") }}: ??? OGX</span>
+                    <br />
+                    <button class="primary-btn small-btn">
+                      {{ $t("i18n.claim") }}
+                    </button>
+                  </div>
+                </div>
+
+                <p></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div @click="cancel()" class="text-link">
+          {{ $t("i18n.cancel") }}
+        </div>
+      </div>
+    </modal>
+
+    <!-- LP modal end -->
     <!-- 交易弹窗 -->
     <!-- <modal
       height="auto"
@@ -559,8 +744,6 @@
       </div>
     </modal>
 
-    
-
     <!-- 标准弹窗 -->
 
     <modal
@@ -575,7 +758,7 @@
 
     <!-- 清算 弹窗 -->
 
-    <modal
+    <!-- <modal
       height="auto"
       classes="common-modal"
       color="#49d663"
@@ -632,15 +815,12 @@
         </div>
 
         <div class="modal-action">
-          <!-- <button class="confirm-btn" @click="doBurn()">
-            {{ $t("i18n.confirm") }}
-          </button> -->
           <div @click="cancel()" class="text-link">
             {{ $t("i18n.cancel") }}
           </div>
         </div>
       </div>
-    </modal>
+    </modal> -->
 
     <!-- 弹窗结束 -->
 
@@ -779,6 +959,18 @@
         </div>
       </div>
 
+      <div class="clearfix">
+        <div class="action-wrap info" @click="checkLP()">
+          <div class="action">
+            <img src="../assets/lp.png" alt />
+          </div>
+          <div class="action-text">{{ $t("i18n.lpReward") }}</div>
+          <div class="action-desc">
+            {{ $t("i18n.lpReward1") }} <br />{{ $t("i18n.lpReward2") }}
+          </div>
+        </div>
+      </div>
+
       <!-- <div class="action-wrap" @click="store()">
         <div class="action">
           <img src="../assets/store.png" alt />
@@ -838,4 +1030,88 @@ export default Home;
 
 <style lang="less">
 @import "./home.less";
+
+.lp-list-wrap {
+  max-height: 400px;
+  overflow: auto;
+}
+
+.col-1 {
+  padding: 2px 8px;
+}
+
+.coming-div {
+  text-align: center;
+  padding: 12px;
+}
+
+.lp-wrap {
+  position: relative;
+  margin: 12px 4px;
+  padding: 8px;
+
+  &.disabled {
+    opacity: 0.1;
+  }
+
+  .tips {
+    padding: 2px 8px;
+  }
+
+  .lp-detail {
+    h4 {
+      margin-left: 30px;
+    }
+
+    .box {
+      text-align: center;
+
+      span {
+        margin: 4px 0;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 24px;
+      }
+
+      button.small-btn {
+        display: inline-block;
+      }
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  > div {
+    min-height: 72px;
+  }
+
+  .lp-token-img {
+    vertical-align: middle;
+    display: inline-block;
+    margin-left: 8px;
+    // position: absolute;
+    // bottom: 12px;
+    // left: 24px;
+
+    img {
+      width: 18px;
+      height: 18px;
+      float: left;
+      border-radius: 100px;
+      margin-left: -4px;
+    }
+  }
+
+  .dfs {
+    background: url("../assets/dfs-icon.png") no-repeat;
+    background-size: auto 24px;
+  }
+
+  .defibox {
+    background: url("../assets/box-icon.png") no-repeat;
+    background-size: auto 24px;
+  }
+}
 </style>

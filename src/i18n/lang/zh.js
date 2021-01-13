@@ -155,7 +155,16 @@ const zh = {
     orderList: '交易记录',
     coming: '即将上线',
     guide: '新手引导',
-    website: "官网"
+    website: "官网",
+    lpReward: "做市奖励",
+    lpReward1: "提供流动性",
+    lpReward2: "获取奖励",
+    lpRewardDesc: '通过提供流动性来获取OGX奖励',
+    currentEpochClaimed: '本周期已领取',
+    manage: '管理',
+    claimToEscrow: '领取到托管池',
+    canClaimed: '可领取',
+    claimToEscrowTip: '{claimTime} 后可领取到托管池'
   }
 };
 
