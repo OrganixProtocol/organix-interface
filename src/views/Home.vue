@@ -259,9 +259,10 @@
         <div class="modal-desc">
           {{ $t("i18n.lpRewardDesc") }}.
           <a
+            class="green-link"
             :href="
               $i18n.locale === 'en'
-                ? 'https://organix.gitbook.io/cn/staking/ru-he-huo-de-zuo-shi-jiang-li'
+                ? 'https://organix.gitbook.io/en/stake-ogx/how-to-get-the-market-making-reward'
                 : 'https://organix.gitbook.io/cn/staking/ru-he-huo-de-zuo-shi-jiang-li'
             "
           >

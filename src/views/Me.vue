@@ -376,10 +376,10 @@
 
     <div class="wrap info links">
       <h3>
-        <span class="inline-block" @click="gotoGuide()"
+        <span class="inline-block green-link" @click="gotoGuide()"
           >{{ $t("i18n.guide") }} <i class="iconfont iconopen-link"></i
         ></span>
-        <span class="inline-block" @click="gotoWebsite()"
+        <span class="inline-block green-link" @click="gotoWebsite()"
           >{{ $t("i18n.website") }} <i class="iconfont iconopen-link"></i
         ></span>
       </h3>

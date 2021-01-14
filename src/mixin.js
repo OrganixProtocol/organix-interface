@@ -1317,8 +1317,7 @@ var myMixin = {
                                 var rewardPerToken = parseFloat(lp.reward_pt_stored) + amount;
 
                                 var left = rewardPerToken - parseFloat(miner.reward_per_token_paid);
-                                var canClaim = miner.token * left > 0 ? miner.token * left : 0;
-
+                                var canClaim = (miner.token * left) > 0 ? (miner.token * left / 100000000) : 0;
 
                                 miner.canClaim = canClaim
                                 miner.nextClaimTime = nextClaimTime;
