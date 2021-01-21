@@ -353,7 +353,7 @@
                           myLpTokenObj[lp.id] &&
                           myLpTokenObj[lp.id].canClaimToEscrow
                         "
-                        @click="claim(lp.id)"
+                        @click="claimLp(lp.id)"
                         class="primary-btn small-btn"
                       >
                         {{ $t("i18n.claimToEscrow") }}
