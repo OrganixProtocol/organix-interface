@@ -129,7 +129,9 @@
               <span class="token-name">{{ synth.symbol }}</span> <br />
               <span class="valued label">
                 ${{ synth.price | fixedDeciaml }}</span
-              >
+              ><span v-if="frozenSynth[synth.symbol]">
+                <i @click="showMsg($t('i18n.priceLocked'))" class="iconfont iconlock"></i>
+              </span>
             </td>
             <td>
               <span class="bal">
@@ -203,4 +205,7 @@ export default {
     padding: 6px 8px;
   }
 }
+
+
+
 </style>

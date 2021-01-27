@@ -166,7 +166,8 @@ const en = {
     claimToEscrowTip: 'After {claimTime} you can claim to escrow',
     dfsTips: 'When started you need to execute a new market-making operation in DFS once.',
     startAt: 'Started at ',
-    details: 'Details'
+    details: 'Details',
+    priceLocked: 'The reverse asset price has been frozen. Please wait for the reset of the price after settlement'
   }
 };
 

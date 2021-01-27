@@ -34,6 +34,10 @@
                 onerror="javascript:this.src='https://tp-statics.tokenpocket.pro/token/ogx/OGX.png'"
               />
               <span class="vertical-middle token-name">{{ synth.symbol }}</span>
+
+              <span v-if="frozenSynth[synth.symbol]">
+                <i @click="showMsg($t('i18n.priceLocked'))" class="iconfont iconlock"></i>
+              </span>
             </div>
             <span
               v-if="balanceObj[synth.symbol]"

@@ -129,7 +129,8 @@ var myMixin = {
             lpRewardList: [],
             lpRewardApy: {},
             myLpTokenObj: {},
-            lpPairMap: LP_PAIR
+            lpPairMap: LP_PAIR,
+            frozenSynth: {}
         };
     },
     computed: {
@@ -334,6 +335,9 @@ var myMixin = {
         this.getGlobalConfig();
 
         this.getAllSynths();
+        
+        // checkFrozenSynths
+        this.queryFrozenSynths();
 
         // price update 30s
         this.priceTimer = setInterval(() => {
@@ -385,6 +389,21 @@ var myMixin = {
     methods: {
         go(tab) {
             this.$router.push(tab);
+        },
+        queryFrozenSynths() {
+            rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'inverseprice', limit: 50 }).then(res => {
+                // this.$store.commit('setTargetRatio', { targetRatio: (FLOAT_UNIT / res.rows[0].issuance_ratio) })
+                let frozenObj = {};
+
+                res.rows.forEach(subitem => {
+                    if(+subitem.frozen === 1) {
+                        frozenObj[subitem.sym.split(',')[1]] = true;
+                    } 
+                })
+
+                this.frozenSynth = frozenObj;
+
+            })
         },
         claimLp(mid) {
             if (this.$store.state.currentAccount) {
@@ -961,6 +980,7 @@ var myMixin = {
         },
         getAllSynths() {
             var allSynthsList = [];
+            // get synths' latest price
             return rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'currrundrate', limit: 100 }).then(res => {
                 let tempPriceObj = {};
                 res.rows.forEach(item => {
@@ -971,7 +991,7 @@ var myMixin = {
 
                     tempPriceObj[symbol] = price;
 
-                    // get supply
+                    // get synths' supply
                     rpc.get_currency_stats(MAIN_CONTRACT, symbol).then(subRes => {
                         this.supply[symbol] = subRes[symbol] ? subRes[symbol].supply : 0;
 
@@ -1289,7 +1309,6 @@ var myMixin = {
                         var totalRewadUsd = this.price[MAIN_SYMBOL] * parseFloat(lp.weight)
                         var totalStakedUsd = lp.total_token * (marketTotalUsd / market.liquidity_token)
                         var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
-                        console.log(apy);
 
                         this.lpRewardApy[mid] = apy
                     })
