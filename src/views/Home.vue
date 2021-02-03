@@ -21,7 +21,7 @@
           <p>
             {{
               $t("i18n.mintDesc1", {
-                minStakeTime: $store.state.minStakingTimeStr
+                minStakeTime: $store.state.minStakingTimeStr,
               })
             }}
           </p>
@@ -58,7 +58,7 @@
               :class="[
                 'tips',
                 'em',
-                mintRatio < $store.state.targetRatio ? 'danger' : ''
+                mintRatio < $store.state.targetRatio ? 'danger' : '',
               ]"
             >
               {{ mintRatio | percent }}</span
@@ -172,7 +172,7 @@
               :class="[
                 'tips',
                 'em',
-                burnRatio < $store.state.targetRatio ? 'danger' : ''
+                burnRatio < $store.state.targetRatio ? 'danger' : '',
               ]"
             >
               {{ burnRatio | percent }}</span
@@ -272,7 +272,9 @@
         <div class="divider"></div>
         <div class="lp-list-wrap">
           <div v-for="lp in lpRewardList" class="lp-wrap wrap info">
-            <div :class="lp.type || 'dfs'">
+            <div
+              :class="[lp.type === 0 ? 'dfs' : lp.type === 1 ? 'defibox' : '']"
+            >
               <div class="lp-detail">
                 <h4>
                   {{ lpPairMap[lp.id].token0.split("-")[0] }}-{{
@@ -363,7 +365,7 @@
                           $t("i18n.claimToEscrowTip", {
                             claimTime:
                               myLpTokenObj[lp.id] &&
-                              myLpTokenObj[lp.id].nextClaimTime
+                              myLpTokenObj[lp.id].nextClaimTime,
                           })
                         }}
                       </button>
@@ -372,55 +374,15 @@
                       v-if="!(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"
                       class="tips"
                     >
-                      {{ $t("i18n.dfsTips") }}
+                      {{
+                        lp.type === 0 ? $t("i18n.dfsTips") : $t("i18n.boxTips")
+                      }}
                     </p>
                   </div>
                 </div>
                 <div class="coming-div" v-else>
                   <h3>{{ $t("i18n.startAt") }}: {{ lp.start | formatTime }}</h3>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="lp-wrap wrap info disabled">
-            <div class="defibox">
-              <div class="lp-detail">
-                <h4>
-                  ???-???
-                  <span class="lp-token-img">
-                    <img
-                      src="https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png"
-                      alt=""
-                    />
-                    <img
-                      src="https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png"
-                      alt=""
-                    />
-                  </span>
-                  <span class="float-right success-color"> APY: ???%</span>
-                </h4>
-
-                <div class="divider"></div>
-                <div class="lp-detail">
-                  <div class="col-2 box">
-                    <span>Token: xxxx</span>
-                    <br />
-
-                    <button class="primary-btn small-btn">
-                      {{ $t("i18n.manage") }}
-                    </button>
-                  </div>
-                  <div class="col-2 box">
-                    <span>{{ $t("i18n.reward") }}: ??? OGX</span>
-                    <br />
-                    <button class="primary-btn small-btn">
-                      {{ $t("i18n.claim") }}
-                    </button>
-                  </div>
-                </div>
-
-                <p></p>
               </div>
             </div>
           </div>
@@ -869,7 +831,7 @@
               refreshing ? 'loading' : '',
               'vertical-middle',
               'icon',
-              'refresh'
+              'refresh',
             ]"
           ></i>
         </span>
@@ -884,7 +846,7 @@
               : currentRatio > $store.state.liquidationRatio
               ? 'warning'
               : 'danger',
-            'simple-percent ratio'
+            'simple-percent ratio',
           ]"
         >
           {{ currentRatio | percent }}
@@ -1058,6 +1020,7 @@ export default Home;
   position: relative;
   margin: 12px 4px;
   padding: 8px;
+  border: 1px solid #3a3a3a;
 
   &.disabled {
     opacity: 0.1;

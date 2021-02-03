@@ -9,6 +9,7 @@ import { parseFloat } from "core-js/fn/number";
 import Tab from "@/components/Tab.vue";
 
 const PROD_ENV = 'prod';
+const DEV = 'dev';
 
 const env = PROD_ENV;
 
@@ -31,9 +32,11 @@ const CHAINID = env === PROD_ENV ? 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a11
 
 const MAIN_SYMBOL = "OGX";
 
-const LP_CONTRACT = 'pools.ogx';
+const LP_CONTRACT = env === PROD_ENV ? 'pools.ogx' : 'ogxpools1114';
 
 const DFS_CONTRACT = 'defisswapcnt';
+
+const BOX_CONTRACT = 'swap.defi';
 
 
 const LP_PAIR = {
@@ -48,6 +51,24 @@ const LP_PAIR = {
         token1: 'USDT-tethertether',
         token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OUSD.png',
         token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/USDT-tethertether.png'
+    },
+    OGX: {
+        token0: 'OGX-core.ogx',
+        token1: 'EOS-eosio.token',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
+    },
+    1000878: {
+        token0: 'OGX-core.ogx',
+        token1: 'EOS-eosio.token',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
+    },
+    'BOXAGT': {
+        token0: 'OGX-core.ogx',
+        token1: 'EOS-eosio.token',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
     }
 }
 
@@ -335,7 +356,7 @@ var myMixin = {
         this.getGlobalConfig();
 
         this.getAllSynths();
-        
+
         // checkFrozenSynths
         this.queryFrozenSynths();
 
@@ -396,9 +417,9 @@ var myMixin = {
                 let frozenObj = {};
 
                 res.rows.forEach(subitem => {
-                    if(+subitem.frozen === 1) {
+                    if (+subitem.frozen === 1) {
                         frozenObj[subitem.sym.split(',')[1]] = true;
-                    } 
+                    }
                 })
 
                 this.frozenSynth = frozenObj;
@@ -1270,13 +1291,48 @@ var myMixin = {
         manageLP(type, id) {
 
             // dfs
-            if (type === 'dfs' || !type) {
+            if (type === 0) {
                 location.href = "https://apps.defis.network/market/" + id
             }
-            else {
-                // box
+            // box
+            else if (type === 1) {
+                var pairId = +id - 1000000
+                location.href = this.$store.state.isMobile ? ("https://dapp.defibox.io/marketType/1/" + pairId) : ('https://defibox.io/swap/?pairId=' + pairId)
             }
+        },
+        getMinerInfo(mid, lp) {
+            // get my info as a miner
+            if (this.$store.state.currentAccount) {
+                rpc.get_table_rows({
+                    json: true,
+                    code: LP_CONTRACT,
+                    scope: mid,
+                    table: 'miners',
+                    lower_bound: this.$store.state.currentAccount + ' ',
+                    upper_bound: this.$store.state.currentAccount + ' ',
+                    limit: 1
+                }).then(res => {
+                    if (res.rows.length) {
+                        var miner = res.rows[0];
+                        var canClaimTime = new Date((miner.last_claimed * 1000) + 604800000);
+                        var canClaimToEscrow = new Date().getTime() >= canClaimTime;
+                        var nextClaimTime = dayjs(canClaimTime).format('MM-DD: HH:mm:ss');
 
+                        var closeTime = _.min([parseInt(new Date().getTime() / 1000), lp.period_finish]);
+
+                        var amount = (closeTime - lp.last_update_time) * parseFloat(lp.reward_rate) / lp.total_token;
+                        var rewardPerToken = parseFloat(lp.reward_pt_stored) + amount;
+
+                        var left = rewardPerToken - parseFloat(miner.reward_per_token_paid);
+                        var canClaim = (miner.token * left) > 0 ? (miner.token * left / 100000000) : 0;
+
+                        miner.canClaim = canClaim
+                        miner.nextClaimTime = nextClaimTime;
+                        miner.canClaimToEscrow = canClaimToEscrow;
+                        this.myLpTokenObj[mid] = miner;
+                    }
+                })
+            }
         },
         checkMyLP() {
             rpc.get_table_rows({
@@ -1286,81 +1342,64 @@ var myMixin = {
                 table: 'ponds',
                 limit: 10
             }).then(res => {
-                this.lpRewardList = res.rows;
+                this.lpRewardList = _.reverse(res.rows);
 
                 res.rows.forEach(lp => {
                     var mid = lp.id;
-
-                    // get dfs market info
-                    rpc.get_table_rows({
-                        json: true,
-                        code: DFS_CONTRACT,
-                        scope: DFS_CONTRACT,
-                        table: 'markets',
-                        lower_bound: 637,
-                        upper_bound: 637,
-                        limit: 1
-                    }).then(res => {
-                        var market = res.rows[0];
-
-                        // todo add other tokens
-                        var marketTotalUsd = market.reserve0.indexOf('USDT') ? (parseFloat(market.reserve0) * 2) : market.reserve1.indexOf('USDT') ? (parseFloat(market.reserve1) * 2) : 0;
-
-                        var totalRewadUsd = this.price[MAIN_SYMBOL] * parseFloat(lp.weight)
-                        var totalStakedUsd = lp.total_token * (marketTotalUsd / market.liquidity_token)
-                        var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
-
-                        this.lpRewardApy[mid] = apy
-                    })
-
-                    // get my info as a miner
-                    if (this.$store.state.currentAccount) {
+                    // type = 0 dfs lp
+                    if (lp.type === 0) {
+                        // get dfs market info
                         rpc.get_table_rows({
                             json: true,
-                            code: LP_CONTRACT,
-                            scope: mid,
-                            table: 'miners',
-                            lower_bound: this.$store.state.currentAccount + ' ',
-                            upper_bound: this.$store.state.currentAccount + ' ',
+                            code: DFS_CONTRACT,
+                            scope: DFS_CONTRACT,
+                            table: 'markets',
+                            lower_bound: +mid,
+                            upper_bound: +mid,
                             limit: 1
                         }).then(res => {
-                            if (res.rows.length) {
-                                var miner = res.rows[0];
-                                var canClaimTime = new Date((miner.last_claimed * 1000) + 604800000);
-                                var canClaimToEscrow = new Date().getTime() >= canClaimTime;
-                                var nextClaimTime = dayjs(canClaimTime).format('MM-DD: HH:mm:ss');
+                            var market = res.rows[0];
 
-                                var closeTime = _.min([parseInt(new Date().getTime() / 1000), lp.period_finish]);
+                            // todo add other tokens
+                            var marketTotalUsd = market.reserve0.indexOf('USDT') ? (parseFloat(market.reserve0) * 2) : market.reserve1.indexOf('USDT') ? (parseFloat(market.reserve1) * 2) : 0;
 
-                                var amount = (closeTime - lp.last_update_time) * parseFloat(lp.reward_rate) / lp.total_token;
-                                var rewardPerToken = parseFloat(lp.reward_pt_stored) + amount;
+                            var totalRewadUsd = this.price[MAIN_SYMBOL] * parseFloat(lp.weight)
+                            var totalStakedUsd = lp.total_token * (marketTotalUsd / market.liquidity_token)
+                            var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
 
-                                var left = rewardPerToken - parseFloat(miner.reward_per_token_paid);
-                                var canClaim = (miner.token * left) > 0 ? (miner.token * left / 100000000) : 0;
-
-                                miner.canClaim = canClaim
-                                miner.nextClaimTime = nextClaimTime;
-                                miner.canClaimToEscrow = canClaimToEscrow;
-                                this.myLpTokenObj[mid] = miner;
-
-                            }
+                            this.lpRewardApy[mid] = apy
                         })
+
+                        this.getMinerInfo(mid, lp);
+
                     }
+                    // type = 1 defibox lp
+                    else if (lp.type === 1) {
+                        // get defibox market info
+                        rpc.get_table_rows({
+                            json: true,
+                            code: BOX_CONTRACT,
+                            scope: BOX_CONTRACT,
+                            table: 'pairs',
+                            lower_bound: +lp.id - 1000000,
+                            upper_bound: +lp.id - 1000000,
+                            limit: 1
+                        }).then(res => {
+                            var market = res.rows[0];
 
+                            // todo add other tokens
+                            var marketTotalUsd = market.reserve0.indexOf('EOS') ? (parseFloat(market.reserve0) * 2) * this.price['OEOS'] : market.reserve1.indexOf('EOS') ? (parseFloat(market.reserve1) * 2) * this.price['OEOS'] : 0;
 
+                            var totalRewadUsd = this.price[MAIN_SYMBOL] * parseFloat(lp.weight)
+                            var totalStakedUsd = lp.total_token * (marketTotalUsd / market.liquidity_token)
+                            var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
+                            this.lpRewardApy[mid] = apy
+                        })
+
+                        this.getMinerInfo(mid, lp);
+                    }
                 })
-
-
-
             })
-
-
-
-
-
-
-
-
         },
         getMyInfo() {
             if (this.$store.state.currentAccount) {

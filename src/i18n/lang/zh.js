@@ -166,6 +166,7 @@ const zh = {
     canClaimed: '可领取',
     claimToEscrowTip: '{claimTime} 后可领取到托管池',
     dfsTips: '项目启动后，参与挖矿需要在DFS重新发起一笔做市操作',
+    boxTips: '项目启动后，参与挖矿需要在DefiBox重新发起一笔做市操作',
     startAt: '开始时间',
     details: '说明',
     priceLocked: '反向资产价格已冻结,请等待结算后重置价格'
