@@ -1,10 +1,8 @@
-import Axios from "axios";
 import ScatterJS from "@scatterjs/core";
 import ScatterEOS from "@scatterjs/eosjs2";
 import { JsonRpc, Api } from "eosjs";
 import dayjs from 'dayjs';
 import _ from 'lodash'
-import { all, resolve } from "core-js/fn/promise";
 import { parseFloat } from "core-js/fn/number";
 import Tab from "@/components/Tab.vue";
 
@@ -15,7 +13,7 @@ const env = PROD_ENV;
 
 let requiredFields = '';
 let network = '';
-let rpc = '';
+let rpc = "";
 let scatter = "";
 let api = "";
 
@@ -1297,7 +1295,7 @@ var myMixin = {
             // box
             else if (type === 1) {
                 var pairId = +id - 1000000
-                location.href = this.$store.state.isMobile ? ("https://dapp.defibox.io/marketType/1/" + pairId) : ('https://defibox.io/swap/?pairId=' + pairId)
+                location.href = this.$store.state.isMobile ? ("https://dapp.defibox.io/marketType/2/" + pairId + "?outerLink=1") : ('https://defibox.io/swap/?pairId=' + pairId)
             }
         },
         getMinerInfo(mid, lp) {
