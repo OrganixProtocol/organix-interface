@@ -94,15 +94,22 @@ var myMixin = {
             totalDebtInUsd: '',
             myVestBal: 0,
             myVestList: [],
+            currentVestList: [],
+            currentVestPage: 1,
+            vestPages: 0,
             myRewardBal: 0,
             myRewardList: [],
+            currentRewardList: [],
+            currentRewardPage: 1,
+            rewardPages: 0,
             allMyVestRewarList: [],
             allMyPrivateRewardList: [],
+            storePageSize: 5,
             mintAmount: '',
             burnAmount: '',
             inputSymbol: 'OUSD',
             outputSymbol: 'OBTC',
-            currentTargetInput: '', // 用户选择 输入还是输出 
+            currentTargetInput: '', // 用户选择 输入还是输出
             swapInputAmount: '',
             swapOutputAmount: '',
             currentFeePeriod: '',
@@ -330,7 +337,7 @@ var myMixin = {
             this.getOldToken();
         }
 
-        // check refer 
+        // check refer
         let query = location.search.substr(1);
         let queryObj = {};
 
@@ -372,7 +379,7 @@ var myMixin = {
             this.nowTime = new Date().getTime();
         }, 2000);
 
-        // tab 
+        // tab
         this.$store.commit('setSelectedTab', {
             selected: this.$route.name
         })
@@ -1138,7 +1145,7 @@ var myMixin = {
                 limit: 1
             })
 
-            // new ledger 
+            // new ledger
             var p5 = rpc.get_table_rows({
                 json: true,
                 code: MAIN_CONTRACT,
@@ -1185,7 +1192,7 @@ var myMixin = {
                 this.claimEndTime = dayjs((feePeriodList[currentFeePeriod].start_time + feePeriodDuration) * 1000).format('YYYY-MM-DD HH:mm:ss');
 
                 // current round
-                // claimed 
+                // claimed
                 if (claimedPeriod >= currentFeePeriodId && claimedPeriod !== 0) {
                     this.claimableFee = 0;
                     this.isClaimedCurrentRound = true;
@@ -1459,6 +1466,8 @@ var myMixin = {
                                 this.havePrivateAble = true;
                             }
                         })
+                        this.vestPages = Math.ceil(this.myVestList.length / this.storePageSize)
+                        this.currentVestList = this.myVestList.slice(0,this.storePageSize)
                     }
 
                     this.haveVestAble = false;
@@ -1474,6 +1483,8 @@ var myMixin = {
                                 this.haveVestAble = true;
                             }
                         })
+                        this.rewardPages = Math.ceil(this.myRewardList.length / this.storePageSize)
+                        this.currentRewardList = this.myRewardList.slice(0,this.storePageSize)
 
                     }
 
@@ -1643,6 +1654,16 @@ var myMixin = {
             } else {
 
                 this.showMsg(this.$t("i18n.error") + err.message || err.type || err.code)
+            }
+        },
+        changeStorePage(type, page) {
+            if (type === 'reward') {
+                this.currentRewardList = this.myRewardList.slice((page - 1) * this.storePageSize, page * this.storePageSize)
+                this.currentRewardPage = page
+            }
+            else if (type === 'myVest') {
+                this.currentVestList = this.myVestList.slice((page - 1) * this.storePageSize, page * this.storePageSize)
+                this.currentVestPage = page
             }
         }
     }
