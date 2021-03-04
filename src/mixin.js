@@ -1453,11 +1453,13 @@ var myMixin = {
                     var escrowVest = (res[0].rows && res[0].rows.length) ? res[0].rows[0] : {};
                     var escrowReward = (res[1].rows && res[1].rows.length) ? res[1].rows[0] : {};
 
+
                     this.havePrivateAble = false;
 
                     if (escrowVest.total_vested_account_balance) {
+                        let scheduleList = _.reverse(escrowVest.vesting_schedule_list);
                         this.myVestBal = escrowVest.total_vested_account_balance;
-                        this.myVestList = _.filter(escrowVest.vesting_schedule_list, vest => {
+                        this.myVestList = _.filter(scheduleList, vest => {
                             return +vest.timestamp !== 0;
                         })
 
@@ -1467,14 +1469,15 @@ var myMixin = {
                             }
                         })
                         this.vestPages = Math.ceil(this.myVestList.length / this.storePageSize)
-                        this.currentVestList = this.myVestList.slice(0,this.storePageSize)
+                        this.currentVestList = this.myVestList.slice(0, this.storePageSize)
                     }
 
                     this.haveVestAble = false;
 
                     if (escrowReward.total_escrowed_account_balance) {
+                        let scheduleList = _.reverse(escrowReward.vesting_schedule_list);
                         this.myRewardBal = escrowReward.total_escrowed_account_balance;
-                        this.myRewardList = _.filter(escrowReward.vesting_schedule_list, vest => {
+                        this.myRewardList = _.filter(scheduleList, vest => {
                             return +vest.timestamp !== 0;
                         });
 
@@ -1484,7 +1487,7 @@ var myMixin = {
                             }
                         })
                         this.rewardPages = Math.ceil(this.myRewardList.length / this.storePageSize)
-                        this.currentRewardList = this.myRewardList.slice(0,this.storePageSize)
+                        this.currentRewardList = this.myRewardList.slice(0, this.storePageSize)
 
                     }
 
