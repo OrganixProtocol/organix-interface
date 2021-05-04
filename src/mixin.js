@@ -1297,7 +1297,7 @@ var myMixin = {
 
             // dfs
             if (type === 0) {
-                location.href = "https://apps.defis.network/market/" + id
+                location.href = "https://dfsswap.gitee.io/market/" + id
             }
             // box
             else if (type === 1) {
