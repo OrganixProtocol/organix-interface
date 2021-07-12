@@ -166,6 +166,7 @@ const en = {
     claimToEscrowTip: 'After {claimTime} you can claim to escrow',
     dfsTips: 'When started you need to execute a new market-making operation in DFS once.',
     boxTips: 'When started you need to execute a new market-making operation in DefiBox once.',
+    airTips: 'When started you need to execute a new market-making operation in Air once.',
     startAt: 'Started at ',
     details: 'Details',
     priceLocked: 'The reverse asset price has been frozen. Please wait for the reset of the price after settlement'

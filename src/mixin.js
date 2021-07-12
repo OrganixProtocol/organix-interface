@@ -36,6 +36,7 @@ const DFS_CONTRACT = 'defisswapcnt';
 
 const BOX_CONTRACT = 'swap.defi';
 
+const AIR_CONTRACT = 'air.pizza';
 
 const LP_PAIR = {
     637: {
@@ -62,7 +63,19 @@ const LP_PAIR = {
         token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
         token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
     },
+    314761827157: {
+        token0: 'OUSD-core.ogx',
+        token1: 'USDT-tethertether',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OUSD.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/USDT-tethertether.png'
+    },
     'BOXAGT': {
+        token0: 'OGX-core.ogx',
+        token1: 'EOS-eosio.token',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
+    },
+    'USDII': {
         token0: 'OGX-core.ogx',
         token1: 'EOS-eosio.token',
         token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
@@ -1347,13 +1360,15 @@ var myMixin = {
                 table: 'ponds',
                 limit: 10
             }).then(res => {
-                this.lpRewardList = _.reverse(res.rows);
+                let rows = _.reverse(res.rows); //.filter(x => x.id != 637);
+                this.lpRewardList = rows;
 
                 res.rows.forEach(lp => {
                     var mid = lp.id;
                     // type = 0 dfs lp
                     if (lp.type === 0) {
                         // get dfs market info
+                        lp.platform = 'dfs';
                         rpc.get_table_rows({
                             json: true,
                             code: DFS_CONTRACT,
@@ -1381,6 +1396,7 @@ var myMixin = {
                     // type = 1 defibox lp
                     else if (lp.type === 1) {
                         // get defibox market info
+                        lp.platform = 'defibox';
                         rpc.get_table_rows({
                             json: true,
                             code: BOX_CONTRACT,
@@ -1399,6 +1415,36 @@ var myMixin = {
                             var totalStakedUsd = lp.total_token * (marketTotalUsd / market.liquidity_token)
                             var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
                             this.lpRewardApy[mid] = apy
+                        })
+
+                        this.getMinerInfo(mid, lp);
+                    }
+                    // type = 2 pizza-air lp
+                    else if (lp.type === 2) {
+                        // get air market info
+                        lp.platform = 'air';
+                        var sym = lp.stake_sym.split(',')[1];
+                        rpc.get_table_rows({
+                            json: true,
+                            code: AIR_CONTRACT,
+                            scope: AIR_CONTRACT,
+                            table: 'market',
+                            lower_bound: sym,
+                            upper_bound: sym,
+                            limit: 1
+                        }).then(res => {
+                            var market = res.rows[0];
+                            
+           
+                            // todo add other tokens
+                            var marketTotalUsd = market.reserves[0].indexOf('USDT') ? (parseFloat(market.reserves[0]) * 2) : market.reserves[1].indexOf('USDT') ? (parseFloat(market.reserves[1]) * 2) : 0;
+
+                            var totalRewadUsd = this.price[MAIN_SYMBOL] * parseFloat(lp.weight)
+                            var totalStakedUsd = lp.total_token * (marketTotalUsd / market.lpamount)
+                            var apy = (totalRewadUsd / totalStakedUsd) / 7 * 365;
+                            this.lpRewardApy[mid] = apy
+
+                            // console.log(marketTotalUsd, totalStakedUsd, this.lpRewardApy[mid]);
                         })
 
                         this.getMinerInfo(mid, lp);

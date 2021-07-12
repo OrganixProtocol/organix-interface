@@ -272,9 +272,7 @@
         <div class="divider"></div>
         <div class="lp-list-wrap">
           <div v-for="lp in lpRewardList" class="lp-wrap wrap info">
-            <div
-              :class="[lp.type === 0 ? 'dfs' : lp.type === 1 ? 'defibox' : '']"
-            >
+            <div :class="lp.platform">
               <div class="lp-detail">
                 <h4>
                   {{ lpPairMap[lp.id].token0.split("-")[0] }}-{{
@@ -338,7 +336,7 @@
 
                   <div class="divider"></div>
                   <div class="clearfix">
-                    <div class="col-1">
+                    <div class="col-1" v-if="lp.type == 0 || lp.type == 1">
                       <span>
                         {{ $t("i18n.currentEpochClaimed") }}:
                         {{
@@ -374,9 +372,9 @@
                       v-if="!(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"
                       class="tips"
                     >
-                      {{
-                        lp.type === 0 ? $t("i18n.dfsTips") : $t("i18n.boxTips")
-                      }}
+                      <span v-if="lp.type == 0">{{$t("i18n.dfsTips")}}</span>
+                      <span v-if="lp.type == 1">{{$t("i18n.boxTips")}}</span>
+                      <span v-if="lp.type == 2">{{$t("i18n.airTips")}}</span>
                     </p>
                   </div>
                 </div>
@@ -1083,6 +1081,11 @@ export default Home;
 
   .defibox {
     background: url("../assets/box-icon.png") no-repeat;
+    background-size: auto 24px;
+  }
+
+  .air {
+    background: url("../assets/air-icon.png") no-repeat;
     background-size: auto 24px;
   }
 }
