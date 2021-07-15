@@ -1316,7 +1316,10 @@ var myMixin = {
             // box
             else if (type === 1) {
                 var pairId = +id - 1000000
-                location.href = this.$store.state.isMobile ? ("https://dapp.defibox.io/marketType/2/" + pairId + "?outerLink=1") : ('https://defibox.io/swap/?pairId=' + pairId)
+                location.href = this.$store.state.isMobile ? ("https://defibox.340wan.com/marketType/2/" + pairId + "?outerLink=1") : ('https://defibox.io/swap/?pairId=' + pairId)
+            }
+            else if (type === 2) {
+                location.href = 'https://air-app.pizza.live/air/maker'
             }
         },
         getMinerInfo(mid, lp) {
