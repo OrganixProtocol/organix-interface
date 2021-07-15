@@ -334,42 +334,10 @@
                     </div>
                   </div>
 
-                  <div class="divider"></div>
+                  <div class="divider" v-if="myLpTokenLoaded[lp.id] && !(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"></div>
                   <div class="clearfix">
-                    <div class="col-1" v-if="lp.type == 0 || lp.type == 1">
-                      <span>
-                        {{ $t("i18n.currentEpochClaimed") }}:
-                        {{
-                          myLpTokenObj[lp.id] &&
-                          parseFloat(
-                            parseFloat(myLpTokenObj[lp.id].claimed) +
-                              parseFloat(myLpTokenObj[lp.id].reward)
-                          ).toFixed(4) + " OGX"
-                        }}
-                      </span>
-                      <br />
-                      <button
-                        v-if="
-                          myLpTokenObj[lp.id] &&
-                          myLpTokenObj[lp.id].canClaimToEscrow
-                        "
-                        @click="claimLp(lp.id)"
-                        class="primary-btn small-btn"
-                      >
-                        {{ $t("i18n.claimToEscrow") }}
-                      </button>
-                      <button class="primary-btn small-btn disabled" v-else>
-                        {{
-                          $t("i18n.claimToEscrowTip", {
-                            claimTime:
-                              myLpTokenObj[lp.id] &&
-                              myLpTokenObj[lp.id].nextClaimTime,
-                          })
-                        }}
-                      </button>
-                    </div>
                     <p
-                      v-if="!(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"
+                      v-if="myLpTokenLoaded[lp.id] && !(myLpTokenObj[lp.id] && myLpTokenObj[lp.id].token)"
                       class="tips"
                     >
                       <span v-if="lp.type == 0">{{$t("i18n.dfsTips")}}</span>

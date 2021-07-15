@@ -168,6 +168,7 @@ var myMixin = {
             lpRewardList: [],
             lpRewardApy: {},
             myLpTokenObj: {},
+            myLpTokenLoaded: {},
             lpPairMap: LP_PAIR,
             frozenSynth: {}
         };
@@ -1347,8 +1348,10 @@ var myMixin = {
                         miner.canClaim = canClaim
                         miner.nextClaimTime = nextClaimTime;
                         miner.canClaimToEscrow = canClaimToEscrow;
+                        
                         this.myLpTokenObj[mid] = miner;
                     }
+                    this.myLpTokenLoaded[mid] = true;
                 })
             }
         },
