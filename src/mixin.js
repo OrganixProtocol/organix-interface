@@ -1336,21 +1336,19 @@ var myMixin = {
                 }).then(res => {
                     if (res.rows.length) {
                         var miner = res.rows[0];
-                        var canClaimTime = new Date((miner.last_claimed * 1000) + 604800000);
-                        var canClaimToEscrow = new Date().getTime() >= canClaimTime;
-                        var nextClaimTime = dayjs(canClaimTime).format('MM-DD: HH:mm:ss');
-
                         var closeTime = _.min([parseInt(new Date().getTime() / 1000), lp.period_finish]);
 
                         var amount = (closeTime - lp.last_update_time) * parseFloat(lp.reward_rate) / lp.total_token;
                         var rewardPerToken = parseFloat(lp.reward_pt_stored) + amount;
 
                         var left = rewardPerToken - parseFloat(miner.reward_per_token_paid);
-                        var canClaim = (miner.token * left) > 0 ? (miner.token * left / 100000000) : 0;
+                        
+                        var total = parseFloat(miner.reward) + (miner.token * left)
+                        var canClaim = total > 0 ? total : 0;
+
+                        //console.log(miner.reward, 'left:', left, 'token:', miner.token, 'total:', total, 'canClaim:', canClaim);
 
                         miner.canClaim = canClaim
-                        miner.nextClaimTime = nextClaimTime;
-                        miner.canClaimToEscrow = canClaimToEscrow;
                         
                         this.myLpTokenObj[mid] = miner;
                     }
