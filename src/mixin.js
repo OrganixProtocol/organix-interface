@@ -63,6 +63,12 @@ const LP_PAIR = {
         token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OGX.png',
         token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
     },
+    1230196549: {
+        token0: 'OEOS-core.ogx',
+        token1: 'EOS-eosio.token',
+        token0Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/OEOS.png',
+        token1Url: 'https://tp-statics.tokenpocket.pro/token/ogx/v2/EOS-eosio.token.png'
+    },
     314761827157: {
         token0: 'OUSD-core.ogx',
         token1: 'USDT-tethertether',
