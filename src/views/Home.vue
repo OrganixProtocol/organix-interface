@@ -695,7 +695,7 @@
 
     <!-- 清算 弹窗 -->
 
-    <!-- <modal
+    <modal
       height="auto"
       classes="common-modal"
       color="#49d663"
@@ -711,12 +711,12 @@
           <h5 class="modal-title">{{ $t("i18n.liquidation") }}</h5>
         </div>
         <div class="modal-desc">
-          清算抵押率:
+          {{ $t("i18n.liquidationRatio") }}:
           <span class="tips em">{{
             $store.state.liquidationRatio | percent
           }}</span>
           <span class="float-right"
-            >清算延迟:
+            >{{ $t("i18n.liquidationDelay") }}:
             <span class="tips em"
               >{{ $store.state.liquidationDelay }} {{ $t("i18n.hour") }}
             </span>
@@ -733,7 +733,10 @@
               <td style="text-align: left">
                 {{ liq.account }}
               </td>
-              <td style="text-align: right">
+              <td v-if="liq.expire" style="text-align: right">
+                <span class="inline-block green-link" @click="liquidation(liq.account)">{{ $t("i18n.liquidation") }}</span>
+              </td>
+              <td v-else style="text-align: right">
                 {{ liq.deadline | formatTime }}
               </td>
             </tr>
@@ -757,7 +760,79 @@
           </div>
         </div>
       </div>
-    </modal> -->
+    </modal> 
+
+    <!-- 执行清算弹窗 -->
+    <modal
+      height="auto"
+      classes="common-modal"
+      color="#49d663"
+      :adaptive="true"
+      :clickToClose="true"
+      width="98%"
+      :maxWidth="420"
+      name="doliq-panel"
+    >
+      <div class="modal-bg">
+        <div class="modal-top">
+          <img src="../assets/modal/burn.png" class="modal-logo" alt />
+          <h5 class="modal-title">{{ $t("i18n.liquidation") }}</h5>
+        </div>
+        <div class="modal-desc">
+          <p>{{ $t("i18n.liquidationDesc", {liqRatio: ($store.state.liquidationRatio * 100) + '%'}) }}</p>
+        </div>
+        <div class="divider"></div>
+        <div class="modal-input">
+          {{ $t("i18n.maxToLiquidated") }}:
+          <span @click="maxLiquidationInput(1)">{{ liquidationBalance }}</span><br />
+           {{ $t("i18n.yourOusdBalance") }}:
+          <span @click="maxLiquidationInput(2)">{{ ousdWalletBalance }}</span>
+          <div style="position: relative">
+            <input
+              type="number"
+              class="input"
+              v-model="liquidationAmount"
+              :placeholder="$t('i18n.liquidatePlaceholder')"
+            />
+            <button @click="maxLiquidationInput(0)" class="max-button">
+              {{ $t("i18n.max") }}
+            </button>
+          </div>
+
+        </div>
+        <div class="modal-action">
+          <button
+            v-if="
+              liquidationAmount &&
+              parseFloat(liquidationAmount) > 0 &&
+              !isMinting
+            "
+            class="confirm-btn"
+            @click="doLiquidation()"
+          >
+            {{ $t("i18n.confirm") }}
+          </button>
+          <button
+            v-else-if="
+              !isMinting ||
+              !mintAmount ||
+              parseFloat(liquidationAmount) === 0
+            "
+            class="confirm-btn loading-bg"
+          >
+            {{ $t("i18n.confirm") }}
+          </button>
+          <button v-else class="confirm-btn loading-bg">
+            <i class="iconfont iconrefresh loading"></i>
+            {{ $t("i18n.confirm") }}
+          </button>
+
+          <div @click="cancel()" class="text-link">
+            {{ $t("i18n.cancel") }}
+          </div>
+        </div>
+      </div>
+    </modal>
 
     <!-- 弹窗结束 -->
 
@@ -906,37 +981,23 @@
             {{ $t("i18n.reward2") }}
           </div>
         </div>
-      </div>
-
-      <!-- <div class="action-wrap" @click="store()">
-        <div class="action">
-          <img src="../assets/store.png" alt />
+      
+        <div class="action-wrap info" @click="checkLiquidation()">
+          <div class="action">
+            <img src="../assets/liquidate.png" alt />
+          </div>
+          <div class="action-text">{{ $t("i18n.liquidation") }}</div>
+          <div class="action-desc">
+            {{ $t("i18n.liquidationDesc1") }} <br />
+            {{ $t("i18n.liquidationDesc2") }}
+          </div>
         </div>
-        <div class="action-text">{{ $t("i18n.store") }}</div>
-      </div> -->
+
+      </div>
     </div>
 
     <div class="clearfix"></div>
 
-    <!-- <div class="wrap">
-      <h3>
-        {{ $t("i18n.liquidationRatio") }}
-        <i
-          v-popover:tooltip.top="$t('i18n.liquidationDesc')"
-          v-popover:width="200"
-          class="iconfont iconinfo"
-        ></i>
-
-        <span class="float-right tips em">
-          {{ $store.state.liquidationRatio | percent }}
-        </span>
-      </h3>
-      <div class="wrap">
-        <span class="text-link" @click="checkLiquidation()"
-          >查看待清算列表</span
-        >
-      </div>
-    </div> -->
 
     <!-- <div class="wrap footer">
       <button @click="goEx()" class="primary-btn">ORGANIX EXCHANGE</button>

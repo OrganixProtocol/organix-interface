@@ -9,7 +9,7 @@ import Tab from "@/components/Tab.vue";
 const PROD_ENV = 'prod';
 const DEV = 'dev';
 
-const env = PROD_ENV;
+const env = DEV;
 
 let requiredFields = '';
 let network = '';
@@ -26,11 +26,13 @@ const DEFAULT_REFER = env === PROD_ENV ? 'tpdappincome' : 'itokenpocket';
 const MAIN_CONTRACT = env === PROD_ENV ? "core.ogx" : 'organixtokep';
 const OLD_CONTRACT = env === PROD_ENV ? "organixtoken" : "ogxtokentok1";
 const SWITCH_CONTRACT = env === PROD_ENV ? 'switch.ogx' : "ogxswitch111";
-const CHAINID = env === PROD_ENV ? 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906' : '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'
+// const CHAINID = env === PROD_ENV ? 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906' : '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'
+const CHAINID = env === PROD_ENV ? 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906' : '8a34ec7df1b8cd06ff4a8abbaa7cc50300823350cadc59ab296cb00d104d2b8f'
 
 const MAIN_SYMBOL = "OGX";
+const OUSD_SYMBOL = "OUSD";
 
-const LP_CONTRACT = env === PROD_ENV ? 'pools.ogx' : 'ogxpools1114';
+const LP_CONTRACT = env === PROD_ENV ? 'pools.ogx' : 'organixpools';
 
 const DFS_CONTRACT = 'defisswapcnt';
 
@@ -101,6 +103,7 @@ var myMixin = {
             msg: "",
             ogxWalletBalance: '',
             ogxStoreBalance: 0,
+            ousdWalletBalance: '',
             // synthsList: [],
             price: {},
             balanceObj: {},
@@ -126,6 +129,7 @@ var myMixin = {
             storePageSize: 5,
             mintAmount: '',
             burnAmount: '',
+            liquidationAmount: '',
             inputSymbol: 'OUSD',
             outputSymbol: 'OBTC',
             currentTargetInput: '', // 用户选择 输入还是输出
@@ -176,7 +180,9 @@ var myMixin = {
             myLpTokenObj: {},
             myLpTokenLoaded: {},
             lpPairMap: LP_PAIR,
-            frozenSynth: {}
+            frozenSynth: {},
+            liquidationTarget: '',
+            liquidationBalance: '0.00000000 OUSD',
         };
     },
     computed: {
@@ -603,12 +609,6 @@ var myMixin = {
             this.ogxWalletBalance = '';
             this.ogxStoreBalance = '';
         },
-        // checkLiquidation() {
-        //     rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'lentry' }).then(res => {
-        //         this.liquidationList = res.rows;
-        //     })
-        //     this.$modal.show('liquidation-panel');
-        // },
         mint() {
             this.$modal.show('mint-panel');
         },
@@ -903,13 +903,123 @@ var myMixin = {
         store() {
             this.$modal.show('store-panel');
         },
+        checkLiquidation() {
+            rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'lentry' }).then(res => {
+                this.liquidationList = res.rows;
+                const now = Math.floor(new Date().getTime() / 1000);
+                for (const row of this.liquidationList) {
+                    row.expire = row.deadline < now;
+                }
+            })
+            this.$modal.show('liquidation-panel');
+            // this.liquidation('hahaha');
+        },
+        liquidation(account) {
+
+            this.liquidationTarget = account;
+            this.liquidationBalance = this.totalDebtInUsd + ' OUSD';
+
+            // 计算需要清算用户的债务（？）
+            let params = {
+                code: MAIN_CONTRACT, 
+                scope: MAIN_CONTRACT, 
+                table: 'issuancedata', 
+                lower_bound: account,
+                upper_bound: account,
+                limit: 1,
+                json: true, 
+            };
+            rpc.get_table_rows(params).then(res => {
+                let debtInfo = res.rows[0];
+                if (debtInfo !== undefined && debtInfo.debt_entry_index !== undefined) {
+                    rpc.get_table_rows({ json: true, code: MAIN_CONTRACT, scope: MAIN_CONTRACT, table: 'debtledger', index_position: 'primary', key_type: 'uint64_t', lower_bound: debtInfo.debt_entry_index, limit: 1 }).then(subres => {
+                        if (subres.rows.length) {
+                            debtInfo.debt = subres.rows[0].debt;
+                            
+                            let lastLedgerInfo = {};
+                            let calcTargetDebt = () => {
+                                let targetDebtPercent = parseFloat(lastLedgerInfo.debt / debtInfo.debt * debtInfo.initial_debt_ownership / LEDGER_UNIT);
+                                this.liquidationBalance = parseFloat(this.totalDebtInUsd * targetDebtPercent);
+                            }
+                            if (this.lastLedgerInfo) {
+                                lastLedgerInfo = this.lastLedgerInfo;
+                                calcTargetDebt();
+                            } else {
+                                let params2 = {
+                                    code: MAIN_CONTRACT,
+                                    scope: MAIN_CONTRACT,
+                                    table: 'debtledger',
+                                    reverse: true,
+                                    limit: 1,
+                                    json: true,
+                                };
+                                rpc.get_table_rows(params2).then(res => {
+                                    lastLedgerInfo = res.rows ? res.rows[0] : {};
+                                    calcTargetDebt();
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+
+            // 计算用户的债务
+            this.$modal.show('doliq-panel');
+
+            
+        },
+        maxLiquidationInput(type) {
+            // todo: ...
+            let ousdBalance = parseFloat(this.ousdWalletBalance);  
+            let maxAmount = parseFloat(this.liquidationBalance);  
+            let floatValue = _.min([ousdBalance, maxAmount]);
+            if (type == 1) {
+                floatValue = _.min([floatValue, maxAmount]);
+            } else if (type == 2) {
+                floatValue = _.min([floatValue, ousdBalance]);
+            }
+            floatValue = _.max([floatValue, 0]);
+            this.liquidationAmount = FIXED(floatValue, TOKEN_UNIT_NUM);
+        },
+        doLiquidation() {
+            if (this.$store.state.currentAccount) {
+                this.isClaiming = true;
+                api.transact({
+                    actions: [{
+                        account: MAIN_CONTRACT,
+                        name: 'liquidate',
+                        authorization: [{
+                            actor: this.$store.state.currentAccount,
+                            permission: this.$store.state.currentPermission
+                        }],
+                        data: {
+                            account: this.$store.state.currentAccount,
+                            target: this.liquidationTarget,
+                            amount: this.liquidationAmount
+                        }
+                    }]
+                }, {
+                    blocksBehind: 3,
+                    expireSeconds: 300, // 5 minutes
+                }).then(res => {
+                    this.isClaiming = false;
+                    this.showMsg(this.$t('i18n.liquidateSuccess'));
+                    this.$modal.hide('doliq-panel');
+                    setTimeout(() => { this.getMyInfo(); this.getAllSynths(); }, 5000)
+                }).catch(err => {
+                    this.isClaiming = false;
+                    this.handleError(JSON.stringify(err));
+                })
+            }
+        },
         cancel() {
             this.$modal.hide('mint-panel');
             this.$modal.hide('burn-panel');
             this.$modal.hide('swap-panel');
             this.$modal.hide('claim-panel');
             this.$modal.hide('store-panel');
-            // this.$modal.hide('liquidation-panel');
+            this.$modal.hide('liquidation-panel');
+            this.$modal.hide('doliq-panel');
             this.$modal.hide('lp-panel');
         },
         showMsg(msg) {
@@ -1471,8 +1581,10 @@ var myMixin = {
                     balances.forEach(bal => {
                         if (bal.split(' ')[1] === MAIN_SYMBOL) {
                             this.ogxWalletBalance = bal;
-                        }
-                        else {
+                        } else {
+                            if (bal.split(' ')[1] === OUSD_SYMBOL) {
+                                this.ousdWalletBalance = bal;
+                            } 
                             synthsList.push({ symbol: bal.split(' ')[1], amount: bal.split(' ')[0], price: '' });
                         }
                     })
