@@ -1459,10 +1459,11 @@ var myMixin = {
 
                         var left = rewardPerToken - parseFloat(miner.reward_per_token_paid);
                         
-                        var total = parseFloat(miner.reward) + (miner.token * left)
+                        var total = parseFloat(miner.reward) + (miner.token * left) / 100000000
                         var canClaim = total > 0 ? total : 0;
-
-                        //console.log(miner.reward, 'left:', left, 'token:', miner.token, 'total:', total, 'canClaim:', canClaim);
+                        
+                        console.log( 'amount:',amount, 'rewardPerToken:', rewardPerToken, 'reward_per_token_paid:', miner.reward_per_token_paid);
+                        console.log( 'reward:', parseFloat(miner.reward), 'left:', left, 'token:', miner.token, 'total:', total, 'canClaim:', canClaim);
 
                         miner.canClaim = canClaim
                         
